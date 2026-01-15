@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="240" viewBox="0 0 1200 240">
+  <g fill="#fff">
+    <g transform="translate(40,40)">
+      <circle cx="40" cy="120" r="16"/>
+      <rect x="64" y="32" width="36" height="144" rx="18" transform="rotate(-45 64 32)"/>
+      <rect x="96" y="56" width="36" height="144" rx="18" transform="rotate(-45 96 56)"/>
+      <rect x="128" y="80" width="36" height="144" rx="18" transform="rotate(-45 128 80)"/>
+      <rect x="170" y="24" width="36" height="88" rx="18" transform="rotate(-45 170 24)"/>
+    </g>
+
+    <text x="340" y="160"
+          font-size="120"
+          font-family="Arial, Helvetica, sans-serif"
+          font-weight="600"
+          letter-spacing="0.18em">VYRATEC</text>
+  </g>
+</svg>
