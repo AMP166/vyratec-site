@@ -227,10 +227,10 @@ export default function Home() {
                 TikTok / Shop
               </a>
               <a
-                href="mailto:hello@vyratec.com"
+                href="mailto:shop@vyratec.com"
                 className="rounded-2xl border border-white/15 bg-white/5 px-6 py-3 font-semibold text-slate-100 hover:border-white/25"
               >
-                Email: hello@vyratec.com
+                Email: shop@vyratec.com
               </a>
             </div>
 
