@@ -1,0 +1,90 @@
+[
+  {
+    "slug": "executive-ai-briefing",
+    "name": "Executive AI Briefing",
+    "title": "Executive AI Briefings Australia | Vyratec",
+    "description": "AI briefings for Australian business leaders. Assess practical applications, responsible use and training priorities in a tailored half-day session.",
+    "heading": "Executive AI briefings",
+    "intro": "A focused session for leaders who need to decide where AI fits in their organisation, what to prioritise and how to support their teams.",
+    "audience": "Executives, managers and decision makers",
+    "duration": "Half day",
+    "interest": "Executive AI Briefing",
+    "cta": "programme-executive",
+    "lastmod": "2026-10-14",
+    "sections": [
+      {"heading": "Make informed decisions about AI", "paragraphs": ["AI adoption creates decisions about tools, information, permissions and the way people work. This briefing connects those decisions to your business priorities through practical demonstrations and discussion.", "We start with the questions your leadership team needs to answer. The session can consider operational reporting, document review, business research and the workflows where AI assistance may be useful."]},
+      {"heading": "What the session covers", "items": ["Business applications relevant to your organisation, with demonstrations of how the work can be approached.", "How to evaluate outputs, check sources and distinguish a useful application from an unreliable result.", "Responsible-use decisions covering approved information, access boundaries and human review.", "Which teams, skills and workflows to prioritise for further training."]},
+      {"heading": "A practical starting point", "paragraphs": ["The briefing is scoped as a half-day session. We agree the audience, existing level of AI use and the issues to cover before delivery. Participant numbers and the balance between demonstration and discussion are planned with you.", "Your team leaves with a clearer set of use cases and next steps. If hands-on practice is the priority, applied team training can follow as a separately scoped programme."]}
+    ],
+    "questions": [
+      {"question": "Is the briefing suitable for leaders who already use AI?", "answer": "Yes. We assess existing experience and focus on the decisions, use cases and responsible-use questions that still need attention."},
+      {"question": "Do we need to commit to a particular AI platform?", "answer": "We agree the tools used for demonstrations during scoping. The briefing can help you evaluate applications before deciding how to expand access or training."}
+    ]
+  },
+  {
+    "slug": "applied-ai-training",
+    "name": "Applied AI Training",
+    "title": "Corporate AI Training Australia | Applied Training | Vyratec",
+    "description": "Hands-on AI training for Australian business teams. Practise analysis, document review, research and reporting with exercises tailored to your workplace.",
+    "heading": "Applied AI training for business teams",
+    "intro": "Hands-on training for people who need to use AI in their everyday work, from analysing information to preparing a report they can verify.",
+    "audience": "Business, manufacturing, engineering and operations teams",
+    "duration": "One day",
+    "interest": "Applied AI Training",
+    "cta": "programme-applied",
+    "lastmod": "2026-10-14",
+    "sections": [
+      {"heading": "Practise with the information your team works with", "paragraphs": ["A useful exercise reflects a recognisable task. We tailor the training around your roles, selected tools and approved materials, so participants can connect the method to their own work.", "Exercises can involve investigating spreadsheet data, comparing procedures, researching a business question or preparing a recurring update. We agree the selection during scoping rather than trying to cover every possible application."]},
+      {"heading": "Skills developed in the session", "items": ["Define the task and provide the context an AI tool needs to produce a useful response.", "Work with business data and documents while respecting your organisation’s information boundaries.", "Check calculations, compare outputs and trace important statements back to sources.", "Build reusable templates and methods for analysis, research and reporting."]},
+      {"heading": "Delivery that matches your team", "paragraphs": ["The programme is scoped as a one-day session with hands-on exercises, demonstrations and discussion. Content and pace reflect participants’ existing experience, including teams that already use AI regularly.", "Before the session, we agree group size, tool access and the materials used in exercises. Participants leave with reusable ways of working and an action plan for applying them. Follow-on support can be discussed where it would help adoption."]}
+    ],
+    "questions": [
+      {"question": "Can the training use our existing AI tools?", "answer": "Yes. We agree platforms and access requirements before the session so exercises fit the tools available to your team."},
+      {"question": "Do participants need to share confidential files?", "answer": "No. Exercises use synthetic or expressly approved training materials. We agree the information boundaries with your organisation before delivery."}
+    ]
+  },
+  {
+    "slug": "ai-workflow-automation",
+    "name": "AI Workflows & Automation",
+    "title": "AI Workflow & Automation Training Australia | Vyratec",
+    "description": "AI workflow and supervised automation training for Australian teams. Map processes, assess tools and practise prototypes with clear review and approval steps.",
+    "heading": "AI workflow and automation training",
+    "intro": "Training for teams ready to connect individual AI tasks into repeatable workflows, with clear permissions and review points.",
+    "audience": "Teams with existing AI experience",
+    "duration": "Two days",
+    "interest": "AI Workflows & Automation",
+    "cta": "programme-automation",
+    "lastmod": "2026-10-14",
+    "sections": [
+      {"heading": "Understand the process before choosing the tools", "paragraphs": ["A workflow begins with an input, passes through decisions and produces an output someone needs to use. We help your team map that work and identify which steps may benefit from AI assistance.", "The training covers where information enters a process, how it moves between tools and where people need to check or approve a result. That makes the discussion useful for operational teams as well as people exploring agents and automation platforms."]},
+      {"heading": "What your team works through", "items": ["Map a recurring process and identify its inputs, handoffs, exceptions and outputs.", "Assess possible tools and the access they would require.", "Work through agent demonstrations and supervised workflow prototypes.", "Define validation, error handling and human approval points before a workflow is relied on."]},
+      {"heading": "A supervised training environment", "paragraphs": ["The programme is scoped over two days, with demonstrations and practical exercises matched to your team’s experience. Tools, access and training materials are agreed before delivery.", "Prototypes are learning exercises. Any move into an operational workflow needs its own scope, testing and permissions. Your team leaves with a process map, reusable methods and a clearer view of the next steps needed for practical adoption."]}
+    ],
+    "questions": [
+      {"question": "Is this suitable for a team new to AI?", "answer": "The programme suits teams with existing AI experience. If participants first need a reliable method for analysis, documents and reporting, applied AI training is a useful starting point."},
+      {"question": "Will a training prototype be deployed into our systems?", "answer": "Operational deployment is separately scoped. The training focuses on understanding, supervised prototyping and the checks a workflow needs before business use."}
+    ]
+  },
+  {
+    "slug": "custom-corporate-workshops",
+    "name": "Custom Corporate Workshops",
+    "title": "Custom Corporate AI Workshops Australia | Vyratec",
+    "description": "Tailored corporate AI workshops for Australian organisations. Plan training around your industry, team size, existing tools and priority business workflows.",
+    "heading": "Custom corporate AI workshops",
+    "intro": "A workshop planned around a specific team, business challenge or workflow, with the content and delivery format agreed with your organisation.",
+    "audience": "Your department, team or wider organisation",
+    "duration": "Tailored scope",
+    "interest": "Custom Corporate Workshop",
+    "cta": "programme-custom",
+    "lastmod": "2026-10-14",
+    "sections": [
+      {"heading": "Start with the work you want to improve", "paragraphs": ["Your team may need a focused session on document review, a practical reporting exercise, or a workshop connecting AI to a supply chain process. We begin with that requirement and plan the training around it.", "The audience’s roles, current AI use and available tools shape the content. We can combine leadership discussion, demonstrations and hands-on practice where that helps the people attending."]},
+      {"heading": "What we agree before delivery", "items": ["The business task or capability the workshop should address.", "Participant roles, existing skills and approximate group size.", "Tools, access arrangements and approved training materials.", "Session length, facilitation and the balance of demonstration, practice and discussion."]},
+      {"heading": "A format that fits the audience", "paragraphs": ["Small teams can work closely through exercises. Departments and larger audiences may need a different mix of demonstration, facilitated practice and discussion. Group size and the level of interaction are scoped together.", "Vyratec is Sydney based and delivers training for Australian organisations. On-site and online arrangements are agreed during scoping. The workshop closes with reusable methods and practical next steps; follow-on adoption support can be included in the proposal where useful."]}
+    ],
+    "questions": [
+      {"question": "Can a workshop focus on manufacturing or supply chain work?", "answer": "Yes. We can scope exercises around the business processes your team needs to improve, using synthetic or approved materials and your agreed tools."},
+      {"question": "Is there a fixed participant limit?", "answer": "Participant numbers, facilitation and format are agreed together. Tell us the approximate audience size and the interaction you need so we can propose a suitable scope."}
+    ]
+  }
+]

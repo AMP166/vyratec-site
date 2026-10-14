@@ -65,7 +65,7 @@ For enquiry reporting, group successful rows by `blob3` to inspect unique provid
 - `functions/api/enquire.js`: validated email delivery and confirmation.
 - `functions/api/events.js`: anonymous visitor events.
 - `privacy.html`: notice describing the actual website implementation.
-- `assets/applied-structure.svg`: original technical hero illustration, editable as SVG; displayed on desktop, omitted on small screens to keep the mobile introduction focused.
+- `assets/training-structure.svg`: original technical hero illustration, editable as SVG; displayed on desktop, omitted on small screens to keep the mobile introduction focused.
 
 When changing programme labels, update `functions/_lib.mjs` and the form options together. Preserve the existing Vyratec wordmarks and favicons. There are no fabricated testimonials, ROI figures, case-study results or current-client claims. The experience section describes delivered manufacturing training and supply chain management training without current-client or endorsement claims. Public pricing and participant caps from the private planning document are not published.
 
@@ -82,3 +82,19 @@ When changing programme labels, update `functions/_lib.mjs` and the form options
 Build and function-bundle checks, desktop/mobile checks, keyboard navigation and enquiry integration tests are included in the handoff. Confirm the production custom domain resolves to the intended Pages project and that its Git production branch and output directory match this project. Configure email and analytics, then run the actual delivery and event-retention checks before merging to the production branch.
 
 Official references: [Cloudflare Pages Functions](https://developers.cloudflare.com/pages/functions/), [Pages bindings and secrets](https://developers.cloudflare.com/pages/functions/bindings/), [Resend email API](https://resend.com/docs/api-reference/emails/send-email), [Resend retry idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys).
+
+## Search pages and crawl behaviour
+
+Programme content lives in `content/programmes.json`. `build-pages.cjs` renders four separate pages with distinct titles, descriptions, canonical URLs, service schema, breadcrumbs and related-programme links. Programme enquiries link to the homepage with a fixed programme slug that preselects the form. Shared navigation and footer markup come from `index.html`; the pages remain static and work without JavaScript.
+
+The build generates `dist/sitemap.xml` from the published programme list plus the homepage and privacy page. Use the extensionless `/privacy` canonical URL. Update the relevant last-modified date when content changes; do not add unpublished or missing pages to the sitemap. The original repository had only homepage and privacy HTML pages; both remain available, with `/privacy.html` permanently redirected to `/privacy`.
+
+`robots.txt` allows public content and images and excludes the enquiry/event API. `/robots.xml` permanently redirects to the standard crawler file. Cloudflare Pages does not define a robots.xml crawl-control format. `_redirects` also preserves `/index.html` as a permanent redirect to the homepage.
+
+`404.html` is the Cloudflare Pages fallback for missing pages, including nested routes. It is excluded from indexing and is not a blanket redirect to the homepage. Verify the real HTTP 404 status after deployment. The local preview builds the production output and reproduces extensionless routing, redirects and the missing-page status.
+
+The document-start anchor is on the non-sticky body. Keep `#top` off the sticky header; otherwise native fragment scrolling can stop near the current viewport instead of the document start.
+
+`npm test` includes enquiry integration tests and real HTTP checks of the 404 status, legacy redirects, sitemap coverage, distinct page metadata and service schema. Production checks should also verify the custom domain, all sitemap URLs and mobile navigation. Search indexing and rankings are controlled by search engines; these files do not submit a Search Console property.
+
+References: https://developers.cloudflare.com/pages/configuration/serving-pages/ ; https://developers.cloudflare.com/pages/configuration/redirects/ ; https://developers.google.com/search/docs/crawling-indexing/robots/intro ; https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap

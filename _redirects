@@ -1,0 +1,4 @@
+# Keep known legacy URLs useful. Missing pages retain a real 404 response.
+/robots.xml /robots.txt 301
+/privacy.html /privacy 301
+/index.html / 301

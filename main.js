@@ -43,6 +43,12 @@
   if (!form || !message || !success) return;
   // Retain the SVG icon when the submit label changes; glyph arrows become emoji on iOS.
   const submitArrow = form.querySelector('.form-submit .arrow-icon').cloneNode(true);
+  // Programme pages link back to this form with a fixed, non-personal programme slug.
+  const selectedProgramme = new URLSearchParams(location.search).get('programme');
+  const programmeInterests = {"executive-ai-briefing":"Executive AI Briefing","applied-ai-training":"Applied AI Training","ai-workflow-automation":"AI Workflows & Automation","custom-corporate-workshops":"Custom Corporate Workshop"};
+  if (Object.hasOwn(programmeInterests, selectedProgramme)) {
+    document.getElementById('interest').value = programmeInterests[selectedProgramme];
+  }
   let started = false;
   let sending = false;
   let requestId = crypto.randomUUID();
