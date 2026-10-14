@@ -16,6 +16,8 @@ Preview: http://127.0.0.1:4173/. The local server runs the actual enquiry handle
 
 Cloudflare's production build command is `npm run build`, with `dist` as the output directory. Keep `functions/` at the repository root; Pages bundles Functions separately. `_routes.json` limits function invocation to `/api/*`. Do not publish the source root as the static output; use `dist`.
 
+The build gives CSS and JavaScript content-hashed filenames and updates page references automatically. This prevents cached assets from an earlier deployment being reused with new markup. Local development continues to use the source filenames. Unversioned files are retained for the server-generated no-JavaScript response.
+
 ## Email setup before production
 
 In Resend, verify a sender domain you control (for example, a sending subdomain of vyratec.com) and create a sending API key. In the existing Cloudflare Pages project's production **Settings → Variables and Secrets**, add:
