@@ -1,3 +1,10 @@
+.arrow-icon {
+  display:inline-block;
+  width:20px;
+  height:20px;
+  flex-shrink:0;
+  vertical-align:middle
+}
 :root {
   --navy:#102744;
   --deep:#0a203b;
@@ -168,15 +175,6 @@ a:focus-visible,button:focus-visible,summary:focus-visible {
   color:#456580;
   margin:0
 }
-.status-dot {
-  display:inline-block;
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--blue);
-  margin-right:12px;
-  vertical-align:2px
-}
 .hero {
   overflow:hidden
 }
@@ -190,7 +188,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible {
 .hero h1 {
   font:600 clamp(54px,5.4vw,80px)/1.09 var(--display);
   letter-spacing:-.058em;
-  margin:28px 0 27px
+  margin:0 0 27px
 }
 .hero h1 span {
   color:var(--blue)
@@ -254,19 +252,6 @@ a:focus-visible,button:focus-visible,summary:focus-visible {
   flex-direction:column;
   min-height:550px
 }
-.figure-heading {
-  display:flex;
-  justify-content:space-between;
-  position:absolute;
-  top:25px;
-  left:27px;
-  right:27px;
-  font-size:9px;
-  letter-spacing:.14em;
-  font-weight:600;
-  color:#5f7388;
-  z-index:1
-}
 .blueprint {
   width:100%;
   height:auto;
@@ -282,19 +267,6 @@ a:focus-visible,button:focus-visible,summary:focus-visible {
   padding:0 27px 21px;
   font:600 20px/1.3 var(--display);
   letter-spacing:-.04em
-}
-.figure-caption-mark {
-  color:var(--blue);
-  font-size:27px
-}
-.figure-scale {
-  display:flex;
-  justify-content:space-between;
-  padding:17px 27px;
-  border-top:1px solid #d1dce7;
-  font-size:8px;
-  letter-spacing:.09em;
-  color:#62768b
 }
 .sector-strip {
   border-block:1px solid var(--line);
@@ -357,7 +329,7 @@ h2 {
 }
 .capability {
   display:grid;
-  grid-template-columns:30px 1fr 25px;
+  grid-template-columns:30px 1fr;
   gap:14px;
   border-top:1px solid var(--line);
   padding:29px 0 32px
@@ -376,18 +348,8 @@ h2 {
   font-size:14px;
   color:var(--muted);
   line-height:1.8;
-  margin:0 0 21px;
+  margin:0;
   max-width:440px
-}
-.capability .micro {
-  font-size:8px;
-  color:#56718b;
-  letter-spacing:.12em
-}
-.capability-symbol {
-  color:var(--blue);
-  font-size:27px;
-  line-height:1.1
 }
 .practice {
   background:var(--deep);
@@ -613,10 +575,6 @@ h2 {
   border-bottom:1px solid var(--line);
   padding:31px 0
 }
-.note-mark {
-  color:var(--blue);
-  font-size:28px
-}
 .delivery-note h3 {
   font-size:16px;
   font-weight:550;
@@ -726,8 +684,8 @@ h2 {
   min-height:56px
 }
 .mercedes-logo {
-  width:56px;
-  height:56px
+  width:64px;
+  height:64px
 }
 .nsp-logo {
   width:108px;
@@ -1093,10 +1051,6 @@ h2 {
   .hero-figure {
     min-height:520px
   }
-  .figure-scale {
-    padding-inline:20px;
-    font-size:7px
-  }
   .sector-strip {
     gap:27px
   }
@@ -1143,11 +1097,6 @@ h2 {
   .hero-figure {
     min-height:460px
   }
-  .figure-heading {
-    font-size:8px;
-    left:19px;
-    right:19px
-  }
   .hero-figure figcaption {
     font-size:17px;
     padding-inline:19px
@@ -1174,14 +1123,11 @@ h2 {
     font-size:19px
   }
   .capability {
-    grid-template-columns:23px 1fr 17px;
+    grid-template-columns:23px 1fr;
     gap:10px
   }
   .capability p {
     font-size:13px
-  }
-  .capability-symbol {
-    font-size:24px
   }
   .workflow-example {
     padding:23px
@@ -1260,11 +1206,11 @@ h2 {
   .hero-grid {
     grid-template-columns:1fr;
     padding-block:46px 35px;
-    gap:39px
+    gap:0
   }
   .hero h1 {
     font-size:clamp(49px,10.5vw,69px);
-    margin:24px 0
+    margin:0 0 24px
   }
   .hero-lead {
     font-size:20px
@@ -1286,10 +1232,7 @@ h2 {
     font-size:8px
   }
   .hero-figure {
-    min-height:0;
-    max-width:520px;
-    align-self:auto;
-    width:100%
+    display:none
   }
   .blueprint {
     height:auto;
@@ -1298,15 +1241,6 @@ h2 {
   .hero-figure figcaption {
     font-size:19px;
     padding:0 23px 21px
-  }
-  .figure-heading {
-    top:22px;
-    left:23px;
-    right:23px
-  }
-  .figure-scale {
-    font-size:7px;
-    padding:16px 23px
   }
   .sector-strip {
     padding-block:21px;
@@ -1338,7 +1272,7 @@ h2 {
   }
   .capability {
     padding-block:25px;
-    grid-template-columns:28px 1fr 25px;
+    grid-template-columns:28px 1fr;
     gap:11px
   }
   .capability h3 {
@@ -1347,9 +1281,6 @@ h2 {
   .capability p {
     font-size:14px;
     margin-bottom:18px
-  }
-  .capability .micro {
-    font-size:8px
   }
   .practice-grid {
     grid-template-columns:1fr;
@@ -1568,10 +1499,6 @@ h2 {
   .hero-actions {
     align-items:flex-start;
     flex-direction:column
-  }
-  .figure-scale {
-    padding-inline:17px;
-    font-size:6px
   }
   .form-grid {
     grid-template-columns:1fr;

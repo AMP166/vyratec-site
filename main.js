@@ -41,6 +41,8 @@
   const message = document.getElementById('form-message');
   const success = document.getElementById('form-success');
   if (!form || !message || !success) return;
+  // Retain the SVG icon when the submit label changes; glyph arrows become emoji on iOS.
+  const submitArrow = form.querySelector('.form-submit .arrow-icon').cloneNode(true);
   let started = false;
   let sending = false;
   let requestId = crypto.randomUUID();
@@ -92,8 +94,7 @@
       form.removeAttribute('aria-busy');
       button.disabled = false;
       button.textContent = 'Send training enquiry ';
-      const arrow = document.createElement('span');
-      arrow.setAttribute('aria-hidden', 'true'); arrow.textContent = '↗'; button.append(arrow);
+      button.append(submitArrow.cloneNode(true));
     }
   });
   document.getElementById('new-enquiry').addEventListener('click', () => {

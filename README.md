@@ -65,16 +65,16 @@ For enquiry reporting, group successful rows by `blob3` to inspect unique provid
 - `functions/api/enquire.js`: validated email delivery and confirmation.
 - `functions/api/events.js`: anonymous visitor events.
 - `privacy.html`: notice describing the actual website implementation.
-- `assets/applied-structure.svg`: original technical hero illustration, editable as SVG.
+- `assets/applied-structure.svg`: original technical hero illustration, editable as SVG; displayed on desktop, omitted on small screens to keep the mobile introduction focused.
 
-When changing programme labels, update `functions/_lib.mjs` and the form options together. Preserve the existing Vyratec wordmarks and favicons. There are no fabricated testimonials, ROI figures, case-study results or current-client claims. Mercedes-Benz is identified as internship experience; NSP as a tailored pilot. Public pricing and participant caps from the private planning document are not published.
+When changing programme labels, update `functions/_lib.mjs` and the form options together. Preserve the existing Vyratec wordmarks and favicons. There are no fabricated testimonials, ROI figures, case-study results or current-client claims. The experience section describes delivered manufacturing training and supply chain management training without current-client or endorsement claims. Public pricing and participant caps from the private planning document are not published.
 
 ## Asset provenance
 
 - Vyratec logo, light wordmark, favicon and touch icons: supplied in the existing project.
 - Hero illustration: original vector artwork created for this redesign.
 - NSP: official site's logo, https://www.nspsurfboards.com/wp-content/uploads/2024/11/NSP-Logo-White-spaced-out-V03.webp ; rendered in monochrome with CSS.
-- Mercedes-Benz: https://commons.wikimedia.org/wiki/File:Mercedes-Benz_free_logo.svg ; public-domain geometric logo file, trademark rights retained by its owner.
+- Mercedes-Benz: https://commons.wikimedia.org/wiki/File:Mercedes-Benz_Star.svg ; chrome three-dimensional star, trademark rights retained by its owner.
 - The business owner confirmed permission to show both company logos on 14 October 2026. Their use accompanies accurate descriptions of prior experience, not customer or endorsement labels.
 
 ## Launch verification
