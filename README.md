@@ -74,7 +74,7 @@ When changing programme labels, update `functions/_lib.mjs` and the form options
 - Vyratec logo, light wordmark, favicon and touch icons: supplied in the existing project.
 - Hero illustration: original vector artwork created for this redesign.
 - NSP: official site's logo, https://www.nspsurfboards.com/wp-content/uploads/2024/11/NSP-Logo-White-spaced-out-V03.webp ; rendered in monochrome with CSS.
-- Mercedes-Benz: https://commons.wikimedia.org/wiki/File:Mercedes-Benz_Star.svg ; chrome three-dimensional star, trademark rights retained by its owner.
+- Mercedes-Benz: https://commons.wikimedia.org/wiki/File:Mercedes-Benz_Star_2022.svg ; chrome three-dimensional star, trademark rights retained by its owner.
 - The business owner confirmed permission to show both company logos on 14 October 2026. Their use accompanies accurate descriptions of prior experience, not customer or endorsement labels.
 
 ## Launch verification
