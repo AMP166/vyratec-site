@@ -1,6 +1,22 @@
 (() => {
+  'use strict';
+  // Only fixed event labels are transmitted; never form values or URL queries.
+  const track = (event, location = 'website') => {
+    if (navigator.doNotTrack === '1' || navigator.globalPrivacyControl) return;
+    fetch('/api/events', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({event, location}), keepalive: true
+    }).catch(() => {});
+  };
+  track('page_view');
   const toggle = document.querySelector('.menu-toggle');
   const mobileNav = document.getElementById('mobile-nav');
+  const closeMenu = () => {
+    if (!toggle || !mobileNav) return;
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Open navigation');
+    mobileNav.hidden = true;
+  };
   if (toggle && mobileNav) {
     toggle.addEventListener('click', () => {
       const open = toggle.getAttribute('aria-expanded') === 'true';
@@ -8,31 +24,80 @@
       toggle.setAttribute('aria-label', open ? 'Open navigation' : 'Close navigation');
       mobileNav.hidden = open;
     });
-    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      mobileNav.hidden = true; toggle.setAttribute('aria-expanded', 'false');
-      toggle.setAttribute('aria-label', 'Open navigation');
-    }));
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 860) { mobileNav.hidden = true; toggle.setAttribute('aria-expanded', 'false'); }
+    mobileNav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !mobileNav.hidden) { closeMenu(); toggle.focus(); }
     });
+    window.matchMedia('(min-width: 961px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
   }
-  const year = document.getElementById('year'); if (year) year.textContent = new Date().getFullYear();
+  document.querySelectorAll('[data-cta]').forEach(link => link.addEventListener('click', () => {
+    track('cta_click', link.dataset.cta);
+    const interest = document.getElementById('interest');
+    if (link.dataset.interest && interest) interest.value = link.dataset.interest;
+  }));
+  const year = document.getElementById('year');
+  if (year) year.textContent = new Date().getFullYear();
   const form = document.getElementById('enquiry-form');
-  const msg = document.getElementById('form-message');
-  if (form && msg) form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const button = form.querySelector('button[type="submit"]');
-    if (!form.reportValidity()) return;
-    button.disabled = true; button.textContent = 'Sending enquiry…';
-    msg.className = 'form-message'; msg.textContent = '';
+  const message = document.getElementById('form-message');
+  const success = document.getElementById('form-success');
+  if (!form || !message || !success) return;
+  let started = false;
+  let sending = false;
+  let requestId = crypto.randomUUID();
+  form.addEventListener('input', () => {
+    if (!started) { started = true; track('enquiry_start', 'contact-form'); }
+  });
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (sending || !form.reportValidity()) return;
+    sending = true;
+    const button = form.querySelector('[type="submit"]');
+    button.disabled = true;
+    button.textContent = 'Sending enquiry…';
+    form.setAttribute('aria-busy', 'true');
+    message.className = 'form-message';
+    message.textContent = '';
+    const data = new FormData(form);
+    data.set('requestId', requestId);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
     try {
-      const r = await fetch('/api/enquire', { method:'POST', body:new FormData(form), headers:{'Accept':'application/json'} });
-      const data = await r.json();
-      if (!r.ok || !data.ok) throw new Error(data.error || 'The form is not available yet. Please try again later.');
-      form.reset(); msg.textContent = 'Thanks. Your enquiry has been sent; we’ll be in touch.'; msg.classList.add('success');
-    } catch (err) {
-      msg.textContent = err.message || 'Unable to send. Please try again shortly.';
-      msg.classList.add('error');
-    } finally { button.disabled = false; button.innerHTML = 'Send an enquiry <span aria-hidden="true">↗</span>'; }
+      const response = await fetch('/api/enquire', {
+        method: 'POST', body: data, headers: {Accept: 'application/json'}, signal: controller.signal
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.ok || !payload.reference) {
+        throw new Error(payload?.error || 'We couldn’t send your enquiry. Please try again or email us directly.');
+      }
+      // Primary conversion is recorded by the server only after Resend accepts the email.
+      form.reset();
+      form.hidden = true;
+      success.hidden = false;
+      success.querySelector('.success-reference').textContent = `Enquiry reference: ${payload.reference}`;
+      success.focus();
+      requestId = crypto.randomUUID();
+    } catch (error) {
+      message.classList.add('error');
+      message.textContent = error.name === 'AbortError'
+        ? 'Sending took longer than expected. Please retry; your enquiry reference prevents a duplicate email.'
+        : error.message;
+      const email = document.createElement('a');
+      email.href = 'mailto:shop@vyratec.com';
+      email.textContent = 'Email shop@vyratec.com';
+      message.append(document.createElement('br'), email);
+      message.focus();
+    } finally {
+      clearTimeout(timeout);
+      sending = false;
+      form.removeAttribute('aria-busy');
+      button.disabled = false;
+      button.textContent = 'Send training enquiry ';
+      const arrow = document.createElement('span');
+      arrow.setAttribute('aria-hidden', 'true'); arrow.textContent = '↗'; button.append(arrow);
+    }
+  });
+  document.getElementById('new-enquiry').addEventListener('click', () => {
+    success.hidden = true; form.hidden = false; started = false;
+    message.textContent = ''; document.getElementById('name').focus();
   });
 })();

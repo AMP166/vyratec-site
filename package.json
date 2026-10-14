@@ -1,9 +1,12 @@
 {
   "name": "vyratec-corporate-site",
   "private": true,
-  "version": "1.0.0",
+  "type": "module",
+  "version": "2.0.0",
   "scripts": {
     "build": "node build-site.cjs",
-    "pages:build": "node build-site.cjs"
+    "pages:build": "node build-site.cjs",
+    "dev": "node dev-server.mjs",
+    "test": "node --test tests/enquiry.test.mjs"
   }
 }

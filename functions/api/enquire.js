@@ -1,34 +1,61 @@
-// Cloudflare Pages Functions: POST /api/enquire
-// To activate, configure RESEND_API_KEY, CONTACT_TO and CONTACT_FROM in Cloudflare Pages env vars.
-// CONTACT_FROM must be a sender domain verified with Resend.
-export async function onRequestPost({request, env}) {
-  const json = (payload, status=200) => new Response(JSON.stringify(payload), {
-    status, headers: {'content-type':'application/json; charset=utf-8', 'cache-control':'no-store'}
-  });
-  try {
-    const contentLength = Number(request.headers.get('content-length') || 0);
-    if (contentLength > 30000) return json({ok:false,error:'Message too large.'},413);
-    const form = await request.formData();
-    if (String(form.get('website')||'').trim()) return json({ok:true});
-    const get = (key, max) => String(form.get(key)||'').trim().slice(0,max);
-    const name = get('name',140), email = get('email',200), company = get('company',200);
-    const interest = get('interest',160), message = get('message',4000);
-    if (!name || !company || !interest || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return json({ok:false,error:'Please complete the required fields.'},400);
-    }
-    if (!env.RESEND_API_KEY || !env.CONTACT_TO || !env.CONTACT_FROM) {
-      return json({ok:false,error:'Online enquiries are not connected yet. Please contact Vyratec using your usual channel.'},503);
-    }
-    const text = [
-      'New Vyratec training enquiry','',`Name: ${name}`,`Email: ${email}`,`Organisation: ${company}`,
-      `Programme: ${interest}`,'','Message:',message || '(not supplied)'
-    ].join('\n');
-    const res = await fetch('https://api.resend.com/emails',{
-      method:'POST', headers:{Authorization:`Bearer ${env.RESEND_API_KEY}`,'Content-Type':'application/json'},
-      body:JSON.stringify({from:env.CONTACT_FROM,to:[env.CONTACT_TO],reply_to:email,subject:`Vyratec enquiry — ${company}`,text})
-    });
-    if (!res.ok) return json({ok:false,error:'The enquiry could not be sent. Please try again later.'},502);
-    return json({ok:true});
-  } catch (err) { return json({ok:false,error:'Unable to process the enquiry right now.'},500); }
+import {json, isSameOrigin, readBody, recordEvent, interests} from '../_lib.mjs';
+
+const mailError = 'We couldn’t send your enquiry. Please try again or email shop@vyratec.com.';
+const escapeHtml = value => value.replace(/[&<>"']/g, char => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]));
+function reply(request, payload, status = 200) {
+  if (request.headers.get('accept')?.includes('application/json')) return json(payload, status);
+  const title = payload.ok ? 'Your enquiry has been sent.' : 'Your enquiry could not be sent.';
+  const detail = payload.ok ? `Thank you. We’ll reply to your work email. Enquiry reference: ${payload.reference}` : payload.error;
+  return new Response(`<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Training enquiry | Vyratec</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/styles.css"></head><body><main class="wrap privacy-page"><a class="brand" href="/"><img src="/assets/vyratec-wordmark-transparent.png" width="182" alt="Vyratec"></a><h1>${title}</h1><p>${escapeHtml(detail)}</p><p><a href="mailto:shop@vyratec.com">shop@vyratec.com</a></p><a class="text-link" href="/#contact">Return to Vyratec ↗</a></main></body></html>`, {status, headers: {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}});
 }
-export async function onRequestGet(){return new Response('Method not allowed',{status:405})}
+
+export async function onRequestPost({request, env}) {
+  const fail = (error, status) => reply(request, {ok: false, error}, status);
+  if (!isSameOrigin(request)) return fail('Please submit your enquiry from the Vyratec website.', 403);
+  const type = request.headers.get('content-type') || '';
+  if (!type.startsWith('multipart/form-data') && !type.startsWith('application/x-www-form-urlencoded')) return fail('Unsupported form format.', 415);
+  let form;
+  try {
+    const body = await readBody(request, 20000);
+    form = await new Request(request.url, {method: 'POST', headers: {'Content-Type': type}, body}).formData();
+  } catch (error) { return fail(error instanceof RangeError ? 'Your enquiry is too long. Please shorten the requirements.' : 'Please check your enquiry and try again.', error instanceof RangeError ? 413 : 400); }
+  if (String(form.get('website') || '').trim()) return fail('Please check your enquiry and try again.', 400);
+  const limits = {name: 140, email: 200, company: 200, interest: 160, message: 4000};
+  const fields = {};
+  for (const [key, max] of Object.entries(limits)) {
+    const value = form.get(key);
+    if (typeof value !== 'string' || !value.trim() || value.trim().length > max) return fail('Please complete all five fields within the displayed limits.', 400);
+    fields[key] = value.trim();
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email) || /[\r\n\x00-\x1f]/.test(fields.name + fields.company + fields.email) || !interests.includes(fields.interest)) return fail('Please check your email address and selected programme.', 400);
+  if (!env.RESEND_API_KEY || !env.CONTACT_FROM || !env.CONTACT_BCC) return fail(mailError, 503);
+  const rawId = form.get('requestId');
+  const requestId = typeof rawId === 'string' && /^[a-f0-9-]{36}$/i.test(rawId) ? rawId : crypto.randomUUID();
+  // Stable per submission and content: retries do not send duplicate notifications;
+  // editing a rejected submission creates a different provider idempotency key.
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(fields)));
+  const hash = [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+  const reference = `VYR-${requestId.slice(0, 8).toUpperCase()}`;
+  const text = [`Corporate training enquiry: ${reference}`, '', `Name: ${fields.name}`, `Work email: ${fields.email}`, `Organisation: ${fields.company}`, `Training interest: ${fields.interest}`, '', 'Requirements:', fields.message].join('\n');
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST', signal: AbortSignal.timeout(12000),
+      headers: {Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `vyratec/${requestId}/${hash}`},
+      body: JSON.stringify({
+        from: env.CONTACT_FROM, to: [env.CONTACT_TO || 'shop@vyratec.com'],
+        bcc: [env.CONTACT_BCC], reply_to: fields.email,
+        subject: `Training enquiry | ${fields.company} | ${reference}`, text
+      })
+    });
+    if (!response.ok) {
+      console.error('Enquiry mail provider rejected delivery', response.status);
+      return fail(mailError, 502);
+    }
+    const result = await response.json();
+    if (!result.id) return fail(mailError, 502);
+    // Stable provider receipt supports deduplicating accepted retries in analytics.
+    recordEvent(env, 'enquiry_success', 'contact-form', request, result.id);
+    return reply(request, {ok: true, reference});
+  } catch { console.error('Enquiry mail delivery unavailable'); return fail(mailError, 502); }
+}
+export function onRequestGet() { return new Response('Method not allowed', {status: 405, headers: {Allow: 'POST'}}); }
