@@ -1,5 +1,5 @@
-export const interests = ['Executive AI Briefing', 'Applied AI Training', 'AI Workflows & Automation', 'Custom Corporate Workshop', 'Help me choose'];
-export const ctaLocations = ['website', 'header', 'hero', 'mobile-navigation', 'use-case', 'programme-executive', 'programme-applied', 'programme-automation', 'programme-custom', 'contact-email', 'footer', 'contact-form', 'callback', 'callback-form'];
+export const interests = ['Executive AI Briefing', 'Applied AI Training', 'AI Workflows & Automation', 'Custom Corporate Workshop', 'Local AI systems & training', 'Help me choose'];
+export const ctaLocations = ['website', 'header', 'hero', 'mobile-navigation', 'use-case', 'programme-executive', 'programme-applied', 'programme-automation', 'programme-custom', 'local-ai', 'contact-email', 'footer', 'contact-form', 'callback', 'callback-form'];
 export function json(payload, status = 200) {
   return new Response(JSON.stringify(payload), {status, headers: {'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}});
 }

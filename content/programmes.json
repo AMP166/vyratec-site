@@ -10,15 +10,16 @@
     "duration": "Half day",
     "interest": "Executive AI Briefing",
     "cta": "programme-executive",
-    "lastmod": "2026-10-14",
+    "lastmod": "2026-10-22",
     "sections": [
       {"heading": "Make informed decisions about AI", "paragraphs": ["AI adoption creates decisions about tools, information, permissions and the way people work. This briefing connects those decisions to your business priorities through practical demonstrations and discussion.", "We start with the questions your leadership team needs to answer. The session can consider operational reporting, document review, business research and the workflows where AI assistance may be useful."]},
-      {"heading": "What the session covers", "items": ["Business applications relevant to your organisation, with demonstrations of how the work can be approached.", "How to evaluate outputs, check sources and distinguish a useful application from an unreliable result.", "Responsible-use decisions covering approved information, access boundaries and human review.", "Which teams, skills and workflows to prioritise for further training."]},
+      {"heading": "What the session covers", "items": ["Business applications relevant to your organisation, with demonstrations of how the work can be approached.", "How to evaluate outputs, check sources and distinguish a useful application from an unreliable result.", "Responsible-use decisions covering approved information, access boundaries and human review.", "Local and cloud AI options, including data location, access controls, hardware needs and operational responsibilities.", "Which teams, skills and workflows to prioritise for further training."]},
       {"heading": "A practical starting point", "paragraphs": ["The briefing is scoped as a half-day session. We agree the audience, existing level of AI use and the issues to cover before delivery. Participant numbers and the balance between demonstration and discussion are planned with you.", "Your team leaves with a clearer set of use cases and next steps. If hands-on practice is the priority, applied team training can follow as a separately scoped programme."]}
     ],
     "questions": [
       {"question": "Is the briefing suitable for leaders who already use AI?", "answer": "Yes. We assess existing experience and focus on the decisions, use cases and responsible-use questions that still need attention."},
-      {"question": "Do we need to commit to a particular AI platform?", "answer": "We agree the tools used for demonstrations during scoping. The briefing can help you evaluate applications before deciding how to expand access or training."}
+      {"question": "Do we need to commit to a particular AI platform?", "answer": "We agree the tools used for demonstrations during scoping. The briefing can help you evaluate applications before deciding how to expand access or training."},
+      {"question": "Can we discuss local AI and data sovereignty?", "answer": "Yes. We can compare local and cloud options against your workloads, information boundaries and available infrastructure. The discussion covers where data is processed and stored, who can access it and the responsibilities involved in operating the system."}
     ]
   },
   {
@@ -76,15 +77,17 @@
     "duration": "Tailored scope",
     "interest": "Custom Corporate Workshop",
     "cta": "programme-custom",
-    "lastmod": "2026-10-14",
+    "lastmod": "2026-10-22",
     "sections": [
       {"heading": "Start with the work you want to improve", "paragraphs": ["Your team may need a focused session on document review, a practical reporting exercise, or a workshop connecting AI to a supply chain process. We begin with that requirement and plan the training around it.", "The audience’s roles, current AI use and available tools shape the content. We can combine leadership discussion, demonstrations and hands-on practice where that helps the people attending."]},
       {"heading": "What we agree before delivery", "items": ["The business task or capability the workshop should address.", "Participant roles, existing skills and approximate group size.", "Tools, access arrangements and approved training materials.", "Session length, facilitation and the balance of demonstration, practice and discussion."]},
+      {"heading": "Build practical local AI skills", "paragraphs": ["A workshop can focus on using local models with synthetic or expressly approved data. We can work through model selection, hardware requirements and output evaluation, alongside the access controls and data flows the setup needs.", "For teams designing or operating their own systems, training can cover local AI architecture, integrations, updates and human oversight. We agree the environment and learning goals before delivery so the session fits your team’s responsibilities."]},
       {"heading": "A format that fits the audience", "paragraphs": ["Small teams can work closely through exercises. Departments and larger audiences may need a different mix of demonstration, facilitated practice and discussion. Group size and the level of interaction are scoped together.", "Vyratec is Sydney based and delivers training for Australian organisations. On-site and online arrangements are agreed during scoping. The workshop closes with reusable methods and practical next steps; follow-on adoption support can be included in the proposal where useful."]}
     ],
     "questions": [
       {"question": "Can a workshop focus on manufacturing or supply chain work?", "answer": "Yes. We can scope exercises around the business processes your team needs to improve, using synthetic or approved materials and your agreed tools."},
-      {"question": "Is there a fixed participant limit?", "answer": "Participant numbers, facilitation and format are agreed together. Tell us the approximate audience size and the interaction you need so we can propose a suitable scope."}
+      {"question": "Is there a fixed participant limit?", "answer": "Participant numbers, facilitation and format are agreed together. Tell us the approximate audience size and the interaction you need so we can propose a suitable scope."},
+      {"question": "Can you tailor training to our local AI environment?", "answer": "Yes. Tell us about your intended workloads, existing hardware and the people who will use or operate the system. We agree model access and approved materials before the workshop, with training covering both practical use and the relevant operating responsibilities."}
     ]
   }
 ]

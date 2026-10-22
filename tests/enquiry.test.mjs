@@ -25,6 +25,29 @@ test('accepted email routes to business inbox, BCCs operator, sets reply-to and 
     assert.ok(!JSON.stringify(points).includes(valid.email));
   } finally { globalThis.fetch = original; }
 });
+test('local AI enquiries preserve the selected interest in the business email and record only the accepted receipt', async () => {
+  const original = globalThis.fetch; const points = []; let payload; let sends = 0;
+  const fields = {...valid, interest: 'Local AI systems & training', message: 'Assess an on-premises AI system for internal engineering documents.'};
+  globalThis.fetch = async (url, options) => {
+    sends++;
+    assert.equal(url, 'https://api.resend.com/emails');
+    payload = JSON.parse(options.body);
+    return Response.json({id: 'local-ai-delivery'});
+  };
+  try {
+    const response = await onRequestPost({request: request(fields), env: {...env, ANALYTICS: {writeDataPoint: point => points.push(point)}}});
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {ok: true, reference: 'VYR-3F7C44CB'});
+    assert.equal(sends, 1);
+    assert.deepEqual(payload.to, ['shop@vyratec.com']);
+    assert.deepEqual(payload.bcc, [env.CONTACT_BCC]);
+    assert.equal(payload.reply_to, fields.email);
+    assert.ok(payload.text.includes(`Training interest: ${fields.interest}`));
+    assert.ok(payload.text.includes(fields.message));
+    assert.deepEqual(points, [{blobs: ['enquiry_success', 'contact-form', 'local-ai-delivery'], doubles: [1], indexes: ['vyratec']}]);
+    for (const value of [fields.name, fields.email, fields.company, fields.interest, fields.message]) assert.ok(!JSON.stringify(points).includes(value));
+  } finally { globalThis.fetch = original; }
+});
 test('missing mail configuration returns 503 and never reports success', async () => {
   const response = await onRequestPost({request: request(), env: {}});
   assert.equal(response.status, 503); assert.equal((await response.json()).ok, false);
@@ -88,6 +111,16 @@ test('analytics are restricted to fixed labels and respect privacy signals', asy
   assert.equal((await track({request: eventRequest({event: 'cta_click', location: 'test@example.com'}), env: configured})).status, 400);
   await track({request: eventRequest({event: 'page_view', location: 'website'}, {DNT: '1'}), env: configured});
   await track({request: eventRequest({event: 'page_view', location: 'website'}, {'Sec-GPC': '1'}), env: configured});
+  assert.equal(points.length, 1);
+});
+test('local AI CTA accepts its fixed analytics label without recording visitor fields', async () => {
+  const points = [];
+  const eventRequest = body => new Request('https://vyratec.com/api/events', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  const configured = {ANALYTICS: {writeDataPoint: point => points.push(point)}};
+  const response = await track({request: eventRequest({event: 'cta_click', location: 'local-ai', email: valid.email, company: valid.company, message: valid.message}), env: configured});
+  assert.equal(response.status, 204);
+  assert.deepEqual(points, [{blobs: ['cta_click', 'local-ai', ''], doubles: [1], indexes: ['vyratec']}]);
+  assert.equal((await track({request: eventRequest({event: 'cta_click', location: `local-ai:${valid.email}`}), env: configured})).status, 400);
   assert.equal(points.length, 1);
 });
 

@@ -21,6 +21,13 @@
       ]
     },
     {
+      "heading": "Local AI experience behind the training",
+      "paragraphs": [
+        "Vyratec brings hands-on experience designing and running AI systems, from on-device models on laptops to self-hosted models on rented GPU infrastructure.",
+        "For Sydney teams considering local AI, workshops can cover model and hardware choices, data location, access controls and operating responsibilities. We scope the training around your workloads and information boundaries, using synthetic or expressly approved materials."
+      ]
+    },
+    {
       "heading": "Prepare a useful training brief",
       "paragraphs": [
         "You do not need a finished AI adoption plan to enquire. A few concrete details help us recommend a suitable starting point:"
