@@ -90,3 +90,124 @@ test('analytics are restricted to fixed labels and respect privacy signals', asy
   await track({request: eventRequest({event: 'page_view', location: 'website'}, {'Sec-GPC': '1'}), env: configured});
   assert.equal(points.length, 1);
 });
+
+const callback = {kind: 'callback', name: 'Callback Requester', email: 'callback@example.com', company: 'Example Operations', phone: '+61 2 5550 1234', preferredTime: 'Tuesday afternoon, Sydney time', message: 'Discuss document workflows.', requestId: '8f81700e-f0c1-46c9-bd7b-d11bab104b17'};
+
+test('callback requests deliver contact details privately and record only the fixed callback conversion label', async () => {
+  const original = globalThis.fetch; const points = []; let payload;
+  globalThis.fetch = async (url, options) => {assert.equal(url, 'https://api.resend.com/emails'); payload = JSON.parse(options.body); return Response.json({id: 'callback-receipt'});};
+  try {
+    const response = await onRequestPost({request: request(callback), env: {...env, CONTACT_TO: 'business@example.com', ANALYTICS: {writeDataPoint: point => points.push(point)}}});
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), {ok: true, reference: 'VYR-8F81700E', kind: 'callback'});
+    assert.deepEqual(payload.to, ['business@example.com']);
+    assert.deepEqual(payload.bcc, [env.CONTACT_BCC]);
+    assert.equal(payload.reply_to, callback.email);
+    assert.equal(payload.subject, 'Callback request | Example Operations | VYR-8F81700E');
+    for (const value of [callback.name, callback.email, callback.company, callback.phone, callback.preferredTime, callback.message]) assert.ok(payload.text.includes(value));
+    assert.match(payload.text, /No appointment has been confirmed/);
+    assert.deepEqual(points[0].blobs, ['enquiry_success', 'callback-form', 'callback-receipt']);
+    for (const value of [callback.name, callback.email, callback.company, callback.phone, callback.preferredTime, callback.message]) assert.ok(!JSON.stringify(points).includes(value));
+  } finally {globalThis.fetch = original;}
+});
+
+test('callback retries share an idempotency key while changed phone, timing or topic produces a different key', async () => {
+  const original = globalThis.fetch; const keys = []; let payload;
+  globalThis.fetch = async (url, options) => {keys.push(options.headers['Idempotency-Key']); payload = JSON.parse(options.body); return Response.json({id: 'callback-receipt'});};
+  try {
+    for (const fields of [callback, callback, {...callback, phone: '02 5550 6789'}, {...callback, preferredTime: 'Friday morning, Sydney time'}, {...callback, message: 'A different topic'}]) {
+      assert.equal((await onRequestPost({request: request(fields), env})).status, 200);
+    }
+    assert.equal(keys[0], keys[1]);
+    assert.equal(new Set([keys[0], ...keys.slice(2)]).size, 4);
+    const noTopic = {...callback}; delete noTopic.message;
+    assert.equal((await onRequestPost({request: request(noTopic), env})).status, 200);
+    assert.match(payload.text, /Topic:\nNot provided/);
+    const emptyTopicResponse = await onRequestPost({request: request({...callback, message: ''}), env});
+    assert.equal(emptyTopicResponse.status, 200);
+    assert.equal(keys.at(-1), keys.at(-2));
+    assert.equal((await onRequestPost({request: request(valid), env})).status, 200);
+    const legacyKey = keys.at(-1);
+    for (const kind of ['', 'training']) {
+      assert.equal((await onRequestPost({request: request({...valid, kind}), env})).status, 200);
+      assert.equal(keys.at(-1), legacyKey);
+    }
+  } finally {globalThis.fetch = original;}
+});
+
+test('callback fields reject malformed phones, missing timing, excessive content, controls and unsupported modes before provider delivery', async () => {
+  const original = globalThis.fetch; let sends = 0;
+  globalThis.fetch = async () => {sends++; return Response.json({id: 'unexpected'});};
+  try {
+    for (const fields of [
+      {...callback, kind: 'booking'}, {...callback, kind: 'Callback'},
+      {...callback, phone: ''}, {...callback, phone: '123'}, {...callback, phone: '1234567890123456'},
+      {...callback, phone: '02 ABCD 1234'}, {...callback, phone: '02 +5550 1234'}, {...callback, phone: '0'.repeat(41)},
+      {...callback, phone: '02\n5550 1234'}, {...callback, preferredTime: ''},
+      {...callback, preferredTime: 'x'.repeat(201)}, {...callback, preferredTime: 'Tuesday\nHeader'},
+      {...callback, name: 'Injected\x7fName'}, {...callback, company: 'Injected\r\nHeader'},
+      {...callback, email: 'invalid'}, {...callback, message: 'x'.repeat(4001)}, {...callback, message: 'Topic\x00bad'},
+      {...callback, website: 'spam'}
+    ]) assert.equal((await onRequestPost({request: request(fields), env})).status, 400);
+    assert.equal(sends, 0);
+    assert.equal((await onRequestPost({request: request(callback, {Origin: 'https://other.example'}), env})).status, 403);
+    assert.equal((await onRequestPost({request: request(callback), env: {}})).status, 503);
+    assert.equal(sends, 0);
+  } finally {globalThis.fetch = original;}
+});
+
+test('a rejected callback notification never reports success or records a conversion', async () => {
+  const original = globalThis.fetch; const points = [];
+  try {
+    for (const mock of [() => Response.json({error: 'rejected'}, {status: 429}), () => Response.json({}), () => {throw new Error('network');}]) {
+      globalThis.fetch = async () => mock();
+      const response = await onRequestPost({request: request(callback), env: {...env, ANALYTICS: {writeDataPoint: point => points.push(point)}}});
+      assert.equal(response.status, 502);
+      const payload = await response.json();
+      assert.equal(payload.ok, false);
+      assert.equal(payload.kind, 'callback');
+    }
+    assert.equal(points.length, 0);
+  } finally {globalThis.fetch = original;}
+});
+
+test('no-JavaScript callback confirmation describes a request and agreed timing rather than a booked appointment', async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = async () => Response.json({id: 'callback-receipt'});
+  try {
+    const userHtml = '<img src=x onerror="alert(1)">';
+    const response = await onRequestPost({request: request({...callback, message: userHtml}, {Accept: 'text/html'}), env});
+    const html = await response.text();
+    assert.equal(response.status, 200);
+    assert.match(html, /Your callback request has been received/);
+    assert.match(html, /We’ll contact you to agree a time for a 15-minute call/);
+    assert.match(html, /<title>Callback request \| Vyratec<\/title>/);
+    assert.match(html, /href="\/#callback"/);
+    assert.doesNotMatch(html, /has been booked|SMS|text message/i);
+    assert.ok(!html.includes(userHtml));
+    const failure = await onRequestPost({request: request(callback, {Accept: 'text/html'}), env: {}});
+    assert.equal(failure.status, 503);
+    const failureHtml = await failure.text();
+    assert.match(failureHtml, /Your callback request could not be sent/);
+    assert.doesNotMatch(failureHtml, /Your callback request has been received/);
+    assert.match(failureHtml, /href="\/#callback"/);
+  } finally {globalThis.fetch = original;}
+});
+
+test('callback start uses a fixed analytics label and accepted callbacks honour privacy signals', async () => {
+  const original = globalThis.fetch; const points = [];
+  const configured = {...env, ANALYTICS: {writeDataPoint: point => points.push(point)}};
+  globalThis.fetch = async () => Response.json({id: 'callback-receipt'});
+  try {
+    const eventRequest = new Request('https://vyratec.com/api/events', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({event: 'enquiry_start', location: 'callback-form'})});
+    assert.equal((await track({request: eventRequest, env: configured})).status, 204);
+    assert.deepEqual(points[0].blobs, ['enquiry_start', 'callback-form', '']);
+    const ctaRequest = new Request('https://vyratec.com/api/events', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({event: 'cta_click', location: 'callback'})});
+    assert.equal((await track({request: ctaRequest, env: configured})).status, 204);
+    assert.deepEqual(points[1].blobs, ['cta_click', 'callback', '']);
+    for (const headers of [{DNT: '1'}, {'Sec-GPC': '1'}]) {
+      assert.equal((await onRequestPost({request: request(callback, headers), env: configured})).status, 200);
+    }
+    assert.equal(points.length, 2);
+  } finally {globalThis.fetch = original;}
+});

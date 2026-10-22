@@ -45,8 +45,9 @@ test('the sitemap lists real, unique canonical pages with distinct search metada
   const sitemap=await sitemapResponse.text();
   assert.match(sitemap,/<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/);
   const urls=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]);
-  assert.equal(urls.length,9);
-  assert.equal(new Set(urls).size,9);
+  assert.equal(urls.length,10);
+  assert.equal(new Set(urls).size,10);
+  assert.ok(urls.includes('https://vyratec.com/ai-training-sydney'));
   const titles=new Set(), descriptions=new Set();
   for(const url of urls) {
     const response=await fetch(base+new URL(url).pathname,{redirect:'manual'});
@@ -67,6 +68,32 @@ test('the sitemap lists real, unique canonical pages with distinct search metada
       assert.match(html,/href="\/\?programme=[a-z-]+#contact"/);
     }
   }
+});
+
+test('the Sydney delivery page is linked, useful and consistent with the confirmed business base', async()=>{
+  const home=await (await fetch(base+'/')).text();
+  assert.match(home,/href="\/ai-training-sydney">North Sydney based<\/a>/);
+  const response=await fetch(base+'/ai-training-sydney',{redirect:'manual'});
+  assert.equal(response.status,200);
+  const html=await response.text();
+  assert.match(html,/<h1>Corporate AI training in Sydney<\/h1>/);
+  assert.match(html,/North Sydney, NSW/);
+  assert.match(html,/On-site workshops for Sydney teams/);
+  assert.match(html,/Prepare a useful training brief/);
+  assert.match(html,/Include colleagues beyond Sydney/);
+  assert.match(html,/href="\/#contact" data-cta="programme-custom"/);
+  for(const slug of ['executive-ai-briefing','applied-ai-training','ai-workflow-automation','custom-corporate-workshops']) {
+    assert.ok(html.includes(`href="/training/${slug}"`));
+  }
+  const schema=JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  const service=schema['@graph'].find(item=>item['@type']==='Service');
+  assert.equal(service.url,'https://vyratec.com/ai-training-sydney');
+  assert.ok(service.areaServed.some(area=>area['@type']==='City'&&area.name==='Sydney'));
+  assert.ok(service.areaServed.some(area=>area['@type']==='Country'&&area.name==='Australia'));
+  const organisation=schema['@graph'].find(item=>item['@type']==='Organization');
+  assert.equal(organisation.location.name,'North Sydney, NSW, Australia');
+  assert.ok(schema['@graph'].some(item=>item['@type']==='BreadcrumbList'));
+  assert.doesNotMatch(JSON.stringify(schema),/LocalBusiness|streetAddress|aggregateRating/);
 });
 
 test('information pages and the error route share working navigation and local fonts', async()=>{

@@ -4,7 +4,7 @@ A lightweight, responsive HTML/CSS/JavaScript site with Cloudflare Pages Functio
 
 ## Local development
 
-Use Node.js 22 or later:
+Use Node.js 22.13 or later (the SMS database tests use Node's built-in SQLite):
 
 ```sh
 npm run dev
@@ -55,7 +55,24 @@ WHERE timestamp > NOW() - INTERVAL '30' DAY
 GROUP BY event, location
 ```
 
-For enquiry reporting, group successful rows by `blob3` to inspect unique provider receipts and avoid counting retries as new leads. Analytics Engine may sample data at higher volumes; counts are estimates. The inbox is the authoritative record of received enquiries. This site does not store enquiries in a database or provide an admin dashboard.
+For enquiry reporting, group successful rows by `blob3` to inspect unique provider receipts and avoid counting retries as new leads. Analytics Engine may sample data at higher volumes; counts are estimates. The inbox is the authoritative record of received enquiries. This site does not store enquiry content in a database or provide an admin dashboard.
+
+## Callback requests and optional owner SMS
+
+The contact section offers a training enquiry or a 15-minute callback request. Callback requests collect the caller's name, work email, organisation, phone number, preferred time (Sydney time) and an optional topic. A request is not a confirmed appointment; the business agrees a time separately. Both forms work without JavaScript and deliver through the same Resend configuration, including the private copy. JavaScript retries retain an idempotency token; a fresh native form submission without JavaScript is a new request. Analytics distinguishes accepted callbacks using `callback-form`.
+
+Owner SMS alerts are **disabled by default**. Email remains authoritative. To enable them:
+
+1. Create and verify a ClickSend account, inspect the current Australian rate, and use its default shared numeric sender. Do not enable automatic recharge as part of this setup.
+2. Create a Cloudflare D1 database, apply `migrations/sms-alerts.sql`, then bind it to the Pages production environment as `SMS_ALERTS`.
+3. Store `CLICKSEND_USERNAME`, `CLICKSEND_API_KEY` and `CALLBACK_SMS_TO` as encrypted production secrets. The destination is the owner's private E.164 mobile number, never the caller's number. Keep these values out of source and logs.
+4. Set `CALLBACK_SMS_ENABLED=true` only when the sender, credit and database are ready. Update the privacy policy to disclose ClickSend processing of the caller's name, phone number and organisation before activation. Redeploy, then test one clearly labelled callback and check email and owner SMS delivery.
+
+The SMS contains a shortened caller name and organisation, caller phone and request reference; the owner checks email for the preferred time. A unique claim on the accepted email receipt prevents repeat SMS sends for retried submissions. An atomic database condition limits all claims to ten per UTC day by default; set `CALLBACK_SMS_DAILY_LIMIT` to a whole number from 1 to 25 to change this. Failed and uncertain sends count towards the limit. Use the same D1 binding across every hostname/environment where SMS is enabled so the cap is shared. When the cap is reached, email still delivers and no SMS is attempted.
+
+Claims store only receipt, delivery state and timestamp, with opportunistic cleanup of records older than 30 days on alert attempts. SMS failures never turn an accepted email request into an error. Uncertain delivery is not automatically retried. The API response confirms provider acceptance, not handset delivery. See `functions/_sms.mjs` and its mocked-provider and SQLite tests.
+
+References: [ClickSend SMS API](https://developers.clicksend.com/docs/messaging/sms), [Australian senders](https://help.clicksend.com/en/articles/43652-australia-61), [charges and credit](https://help.clicksend.com/en/articles/42265-payment-and-charges), [Cloudflare D1 bindings](https://developers.cloudflare.com/pages/functions/bindings/#d1-databases).
 
 ## Content and visual updates
 
@@ -66,6 +83,8 @@ For enquiry reporting, group successful rows by `blob3` to inspect unique provid
 - `functions/api/events.js`: anonymous visitor events.
 - `content/information.json`: privacy policy, website terms, cookie notice and accessibility information.
 - `build-information.cjs`: shared information-page layout and branded 404 fallback.
+- `content/sydney.json`: North Sydney base, Sydney workshop delivery and preparation guidance for `/ai-training-sydney`.
+- `build-location.cjs`: static Sydney delivery-page layout with the shared header/footer and service schema.
 - `assets/training-structure.svg`: original technical hero illustration, editable as SVG; displayed on desktop, omitted on small screens to keep the mobile introduction focused.
 
 When changing programme labels, update `functions/_lib.mjs` and the form options together. Preserve the existing Vyratec wordmarks and favicons. There are no fabricated testimonials, ROI figures, case-study results or current-client claims. The experience section describes delivered manufacturing training and supply chain management training without current-client or endorsement claims. Public pricing and participant caps from the private planning document are not published.
@@ -89,7 +108,9 @@ Official references: [Cloudflare Pages Functions](https://developers.cloudflare.
 
 Programme content lives in `content/programmes.json`. `build-pages.cjs` renders four separate pages with distinct titles, descriptions, canonical URLs, service schema, breadcrumbs and related-programme links. Programme enquiries link to the homepage with a fixed programme slug that preselects the form. Shared navigation and footer markup come from `index.html`; the pages remain static and work without JavaScript.
 
-The build generates `dist/sitemap.xml` from the four published programmes, homepage and four information pages (nine canonical URLs). Use extensionless canonical URLs. Update the relevant last-modified date when content changes; do not add unpublished or missing pages to the sitemap. The original privacy page remains available at `/privacy`, with `/privacy.html` permanently redirected there. Terms and cookie-policy aliases also redirect to their canonical pages.
+The build generates `dist/sitemap.xml` from the four published programmes, homepage, Sydney delivery page and four information pages (ten canonical URLs). Use extensionless canonical URLs. Update the relevant last-modified date when content changes; do not add unpublished or missing pages to the sitemap. The original privacy page remains available at `/privacy`, with `/privacy.html` permanently redirected there. Terms and cookie-policy aliases also redirect to their canonical pages.
+
+`content/sydney.json` provides the content for `/ai-training-sydney`, including preparation guidance and links to the four existing programmes. `build-location.cjs` renders it using the existing training-page layout. Keep the confirmed North Sydney base separate from delivery arrangements: Sydney workplace sessions and online delivery are scoped with each organisation, and the business continues to serve Australian teams. The homepage location link and shared footer make this page discoverable without JavaScript. Use the existing enquiry route `/#contact` and approved tracking labels. The schema identifies an `Organization`, a `Service` and breadcrumbs; it does not invent a street address, public office, telephone number, review or `LocalBusiness` listing. Maintain this substantive regional delivery page rather than generating duplicate suburb pages.
 
 `robots.txt` allows public content and images and excludes the enquiry/event API. `/robots.xml` permanently redirects to the standard crawler file. Cloudflare Pages does not define a robots.xml crawl-control format. `_redirects` also preserves `/index.html` as a permanent redirect to the homepage.
 

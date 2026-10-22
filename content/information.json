@@ -14,12 +14,12 @@
       {
         "id": "collection",
         "heading": "Information you give us",
-        "html": "<p>Our enquiry form collects your name, work email, organisation, training interest and the requirements you enter. If you email us, we also receive your email address and the content of your correspondence.</p><p>We use these details to respond, understand your training needs, prepare proposals and manage any resulting business relationship. Sending an enquiry does not subscribe you to marketing. You can browse without completing the form; its required fields help us respond to a training enquiry. You can also contact us by email.</p><p>Please provide only information you are authorised to share, and leave out sensitive personal information and confidential business material.</p>"
+        "html": "<p>Our training enquiry form collects your name, work email, organisation, training interest and the requirements you enter. If you request a callback, we also collect your phone number, preferred callback time and any optional background you provide. If you email us, we receive your email address and the content of your correspondence.</p><p>We use these details to respond, arrange a call, understand your training needs, prepare proposals and manage any resulting business relationship. Sending an enquiry or callback request does not subscribe you to marketing. You can browse without completing a form; required fields help us respond and arrange a suitable time. You can also contact us by email.</p><p>Please provide only information you are authorised to share, and leave out sensitive personal information and confidential business material.</p>"
       },
       {
         "id": "providers",
         "heading": "Who receives the information",
-        "html": "<p>Cloudflare hosts the website and processes requests. Resend delivers enquiry notifications to our business inbox and a private copy to the business operator. Our email providers store and process the resulting correspondence. We share information with these providers to operate the website and respond to enquiries, and may disclose information where required by law. We do not sell enquiry information.</p><p>These services operate internationally. Information may be processed outside Australia, including in the United States and other countries where providers and their service providers operate. Their locations can change. Provider information is available from <a href=\"https://www.cloudflare.com/privacypolicy/\">Cloudflare</a> and <a href=\"https://resend.com/legal/subprocessors\">Resend</a>. You can contact us about the providers involved in your enquiry.</p>"
+        "html": "<p>Cloudflare hosts the website and processes requests. Resend delivers enquiry notifications to our business inbox and a private copy to the business operator. Our email providers store and process the resulting correspondence. For callback requests, ClickSend may deliver a private SMS alert to the business operator containing your name, phone number, organisation and request reference. This helps us respond to your request; it does not subscribe you to SMS messages.</p><p>We share information with these providers to operate the website and respond to enquiries, and may disclose information where required by law. We do not sell enquiry information.</p><p>These services operate internationally. Information may be processed outside Australia, including in the United States and other countries where providers and their service providers operate. Their locations can change. Provider information is available from <a href=\"https://www.cloudflare.com/privacypolicy/\">Cloudflare</a>, <a href=\"https://resend.com/legal/subprocessors\">Resend</a> and <a href=\"https://www.clicksend.com/us/legal/subprocessors/\">ClickSend</a>. You can contact us about the providers involved in your enquiry.</p>"
       },
       {
         "id": "activity",
@@ -29,7 +29,7 @@
       {
         "id": "retention",
         "heading": "Storage, security and retention",
-        "html": "<p>We keep enquiry correspondence for as long as it is needed to respond, manage a business relationship and meet applicable recordkeeping requirements. Provider logs and measurement records follow the relevant services’ retention settings.</p><p>We use HTTPS, restricted service credentials and access controls to help protect information. We ask you not to send confidential material through the public enquiry form.</p>"
+        "html": "<p>We keep enquiry correspondence for as long as it is needed to respond, manage a business relationship and meet applicable recordkeeping requirements. Provider logs and measurement records follow the relevant services’ retention settings. To prevent duplicate SMS alerts and limit alert volume, we store an email receipt identifier, delivery state and timestamp separately from your form content. Records older than 30 days are removed during subsequent alert processing.</p><p>We use HTTPS, restricted service credentials and access controls to help protect information. We ask you not to send confidential material through the public enquiry form.</p>"
       },
       {
         "id": "requests",
@@ -68,7 +68,7 @@
       {
         "id": "enquiries",
         "heading": "Enquiries and training agreements",
-        "html": "<p>Sending an enquiry starts a conversation. It does not reserve a date, book training, require a payment or create a training agreement.</p><p>The agreed scope, fees, scheduling, cancellation arrangements and any other commercial terms are documented separately before a training engagement is confirmed.</p>"
+        "html": "<p>Sending an enquiry starts a conversation. It does not reserve a date, book training, require a payment or create a training agreement. When you request a 15-minute callback, we contact you to agree a suitable time. Callback times are confirmed separately.</p><p>The agreed scope, fees, scheduling, cancellation arrangements and any other commercial terms are documented separately before a training engagement is confirmed.</p>"
       },
       {
         "id": "materials",

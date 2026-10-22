@@ -8,6 +8,7 @@ module.exports = function buildPages(root, output) {
   const header = home.match(/<header\b[\s\S]*?<\/header>/)[0].replaceAll('href="#', 'href="/#');
   const footer = home.match(/<footer\b[\s\S]*?<\/footer>/)[0].replace(/href="#(?!top)/g, 'href="/#').replace('href="#top" aria-label="Vyratec home"', 'href="/" aria-label="Vyratec home"');
   const information = require('./build-information.cjs')(root, output, header, footer);
+  const location = require('./build-location.cjs')(root, output, header, footer, programmes);
   fs.mkdirSync(path.join(output, 'training'), {recursive:true});
   for (const programme of programmes) {
     if (!/^[a-z-]+$/.test(programme.slug)) throw new Error('Invalid programme slug');
@@ -16,7 +17,7 @@ module.exports = function buildPages(root, output) {
     const programmeHeader = header.replaceAll('href="/#contact"', `href="${contact}"`);
     const programmeFooter = footer.replaceAll('href="/#contact"', `href="${contact}"`);
     const schema = {'@context':'https://schema.org','@graph':[
-      {'@type':'Organization','@id':'https://vyratec.com/#organisation',name:'Vyratec',url:'https://vyratec.com/',logo:'https://vyratec.com/assets/vyratec-wordmark-transparent.png',email:'shop@vyratec.com'},
+      {'@type':'Organization','@id':'https://vyratec.com/#organisation',name:'Vyratec',url:'https://vyratec.com/',logo:'https://vyratec.com/assets/vyratec-wordmark-transparent.png',email:'shop@vyratec.com',location:{'@type':'Place',name:'North Sydney, NSW, Australia'},areaServed:{'@type':'Country',name:'Australia'}},
       {'@type':'Service','@id':`${url}#service`,name:programme.name,description:programme.description,url,serviceType:'Corporate AI training',provider:{'@id':'https://vyratec.com/#organisation'},areaServed:{'@type':'Country',name:'Australia'}},
       {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'Home',item:'https://vyratec.com/'},{'@type':'ListItem',position:2,name:programme.name,item:url}]}
     ]};
@@ -40,6 +41,6 @@ module.exports = function buildPages(root, output) {
 </main>${programmeFooter}</body></html>`;
     fs.writeFileSync(path.join(output, 'training', `${programme.slug}.html`), html);
   }
-  const urls = [{url:'https://vyratec.com/',lastmod:'2026-10-22'},...programmes.map(p=>({url:`https://vyratec.com/training/${p.slug}`,lastmod:p.lastmod})),...information.map(p=>({url:`https://vyratec.com/${p.slug}`,lastmod:p.updated}))];
+  const urls = [{url:'https://vyratec.com/',lastmod:'2026-10-22'},...programmes.map(p=>({url:`https://vyratec.com/training/${p.slug}`,lastmod:p.lastmod})),location,...information.map(p=>({url:`https://vyratec.com/${p.slug}`,lastmod:p.updated}))];
   fs.writeFileSync(path.join(output, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(item=>`  <url><loc>${item.url}</loc><lastmod>${item.lastmod}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 };

@@ -1,0 +1,59 @@
+{
+  "slug": "ai-training-sydney",
+  "title": "Corporate AI Training Sydney | Vyratec",
+  "description": "North Sydney based AI training for business teams. Practical corporate workshops at your Sydney workplace or online, tailored to your tools and workflows.",
+  "heading": "Corporate AI training in Sydney",
+  "intro": "Vyratec is based in North Sydney and delivers practical AI workshops for manufacturing, engineering, operations and corporate teams. Train together at your Sydney workplace, or bring a distributed team together online.",
+  "lastmod": "2026-10-22",
+  "sections": [
+    {
+      "heading": "Train around the work your team actually does",
+      "paragraphs": [
+        "A workshop is most useful when participants can connect it to a real task. We start with the information your team handles, the tools already available and the work you want to improve. That could mean comparing procedures, investigating operational data, researching suppliers or preparing a recurring report.",
+        "The content reflects the audience’s existing skills. People who already use AI can focus on verification, more demanding analysis and repeatable workflows. Teams with different levels of experience need a carefully paced mix of demonstrations, guided exercises and discussion."
+      ]
+    },
+    {
+      "heading": "On-site workshops for Sydney teams",
+      "paragraphs": [
+        "Training at your workplace lets colleagues work through a shared business task and discuss how the method fits their roles. We agree the venue, session format, participant numbers and access arrangements before delivery.",
+        "For a practical session, participants need suitable devices, agreed tool access and time to work through the exercises. For a leadership briefing or larger audience, we plan the balance of demonstration, discussion and facilitated practice around the group. Session length and facilitation are confirmed in your proposal."
+      ]
+    },
+    {
+      "heading": "Prepare a useful training brief",
+      "paragraphs": [
+        "You do not need a finished AI adoption plan to enquire. A few concrete details help us recommend a suitable starting point:"
+      ],
+      "items": [
+        "The team’s roles, approximate group size and current experience with AI.",
+        "One or two business tasks you would like participants to approach more effectively.",
+        "The platforms and account access your organisation permits.",
+        "Whether training will be at your Sydney workplace or online, with any venue or accessibility requirements.",
+        "Your preferred timing and any internal approval or information-handling requirements."
+      ]
+    },
+    {
+      "heading": "Agree the information boundaries before practice",
+      "paragraphs": [
+        "Exercises use synthetic or expressly approved training materials. We agree what can be used in the selected tools and how participants should handle business information. Please describe your requirements in the enquiry form without sending confidential files.",
+        "For example, an operations team could practise bringing sample production records and supplier updates into a weekly review. The exercise covers how to structure the task, investigate exceptions, check source records and identify questions requiring human judgement. The aim is a reusable method your team can apply with appropriate review."
+      ]
+    },
+    {
+      "heading": "Include colleagues beyond Sydney",
+      "paragraphs": [
+        "Online delivery supports Australian teams working across locations. We agree the tools, participation format and exercises so people can follow the demonstration and practise during the session. For teams outside Sydney, online and on-site arrangements are discussed during scoping.",
+        "Your team leaves with reusable ways of working and practical next steps. If you need help applying those methods after the workshop, follow-on adoption support can be included in the agreed scope."
+      ]
+    }
+  ],
+  "programmeHeading": "Choose a starting point",
+  "programmeIntro": "The same programmes can be tailored for a Sydney workplace session or online delivery. The right choice depends on what your participants need to decide, practise or apply.",
+  "programmes": [
+    {"slug": "executive-ai-briefing", "summary": "A half-day discussion of business applications, responsible-use decisions and training priorities for leaders."},
+    {"slug": "applied-ai-training", "summary": "A one-day programme for teams practising analysis, document review, research and reporting."},
+    {"slug": "ai-workflow-automation", "summary": "Two days for experienced AI users mapping processes and developing supervised workflow prototypes."},
+    {"slug": "custom-corporate-workshops", "summary": "A tailored session focused on your department, business challenge or priority workflow."}
+  ]
+}
