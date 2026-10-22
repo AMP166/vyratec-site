@@ -87,7 +87,7 @@ References: [ClickSend SMS API](https://developers.clicksend.com/docs/messaging/
 - `build-location.cjs`: static Sydney delivery-page layout with the shared header/footer and service schema.
 - `assets/training-structure.svg`: original technical hero illustration, editable as SVG; displayed on desktop, omitted on small screens to keep the mobile introduction focused.
 
-When changing programme labels, update `functions/_lib.mjs` and the form options together. Preserve the existing Vyratec wordmarks and favicons. There are no fabricated testimonials, ROI figures, case-study results or current-client claims. The experience section describes delivered manufacturing training and supply chain management training without current-client or endorsement claims. Public pricing and participant caps from the private planning document are not published.
+When changing programme labels, update `functions/_lib.mjs` and the form options together. Preserve the existing Vyratec wordmarks and favicons. The experience section covers manufacturing AI platform development, supply chain management training and Aroona Surf's customer-facing product recommendation chatbot. The owner confirmed ongoing chatbot maintenance, product data across hundreds of surfboard variants, personalised volume calculations and lead capture. Company entries are descriptions of work, with no fabricated testimonials, ROI figures or endorsement claims. Public pricing and participant caps from the private planning document are not published.
 
 ## Asset provenance
 
@@ -95,6 +95,7 @@ When changing programme labels, update `functions/_lib.mjs` and the form options
 - Hero illustration: original vector artwork created for this redesign.
 - NSP: official site's logo, https://www.nspsurfboards.com/wp-content/uploads/2024/11/NSP-Logo-White-spaced-out-V03.webp ; rendered in monochrome with CSS.
 - Mercedes-Benz: https://commons.wikimedia.org/wiki/File:Mercedes-Benz_Star_2022.svg ; chrome three-dimensional star, trademark rights retained by its owner.
+- Aroona Surf: official header wordmark, https://www.aroonasurf.shop/cdn/shop/files/Logo_C.webp?v=1691039817 ; original asset retained, displayed in monochrome on light backgrounds with CSS. The owner requested the company entry on 22 October 2026.
 - DM Sans: self-hosted Latin variable WOFF2 from Google Fonts, with its SIL Open Font License in `assets/fonts/OFL.txt`. Fonts load from this site rather than a third-party font service.
 - The business owner confirmed permission to show both company logos on 14 October 2026. Their use accompanies accurate descriptions of prior experience, not customer or endorsement labels.
 

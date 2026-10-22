@@ -580,6 +580,14 @@ h2 {
   object-fit:contain;
   object-position:left center
 }
+.aroona-logo {
+  width:112px;
+  height:32px;
+  object-fit:contain;
+  object-position:left center;
+  filter:invert(1);
+  mix-blend-mode:multiply
+}
 .experience-brand>.micro {
   font-size:13px;
   letter-spacing:0;
@@ -1504,15 +1512,16 @@ h2 {
 .hero-description { font-size:16px; line-height:1.75 }
 .hero-actions .button { font-size:14px }
 .text-link { font-size:14px; white-space:normal }
-.experience-strip { display:grid; grid-template-columns:1fr 1fr 1fr; align-items:center; gap:40px; border-block:1px solid var(--line); padding-block:25px }
-.experience-strip>p { font-size:14px; color:var(--muted); max-width:200px; margin:0 }
-.experience-strip>a { display:flex; align-items:center; gap:20px; font-size:14px; line-height:1.55; font-weight:550; justify-self:center }
+.experience-strip { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:center; gap:20px 32px; border-block:1px solid var(--line); padding-block:25px }
+.experience-strip>p { grid-column:1/-1; font-size:14px; color:var(--muted); margin:0 }
+.experience-strip>a { display:flex; align-items:center; gap:20px; font-size:14px; line-height:1.55; font-weight:550; justify-self:start; min-width:0 }
 .experience-strip>a:hover { color:var(--blue) }
 .experience-strip-copy { display:flex; flex-direction:column; gap:5px; min-width:0 }
 .experience-strip-copy strong { font-size:14px; font-weight:600; line-height:1.5 }
 .experience-strip-service { font-size:13px; font-weight:400; color:var(--muted); line-height:1.55 }
 .experience-strip img { flex-shrink:0; object-fit:contain }
-.experience-strip a:last-child img { filter:brightness(0) }
+.experience-strip .experience-logo-nsp { filter:brightness(0) }
+.experience-strip .experience-logo-aroona { width:86px; height:26px; filter:invert(1); mix-blend-mode:multiply }
 .capability { display:block }
 .capability h3 { letter-spacing:-.02em }
 .capability p { font-size:15px; margin-bottom:0 }
@@ -1618,7 +1627,8 @@ h2 {
   .experience-strip>p { grid-column:1/-1; max-width:none; font-size:14px }
   .experience-strip>a { justify-self:start; gap:12px; font-size:13px }
   .experience-strip img { width:32px; height:36px }
-  .experience-strip a:last-child img { width:37px }
+  .experience-strip .experience-logo-nsp { width:37px }
+  .experience-strip .experience-logo-aroona { width:76px; height:24px }
   .section-heading>p { font-size:16px }
   .capability p,.experience-record p { font-size:15px }
   .workflow-example { padding:0 0 0 20px }
