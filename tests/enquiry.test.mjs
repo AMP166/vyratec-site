@@ -57,8 +57,26 @@ test('no-JavaScript submission returns an accessible confirmation after acceptan
   const original = globalThis.fetch;
   globalThis.fetch = async () => Response.json({id: 'test-delivery'});
   try {
-    const response = await onRequestPost({request: request(valid, {Accept: 'text/html'}), env});
-    assert.match(response.headers.get('content-type'), /text\/html/); assert.match(await response.text(), /Your enquiry has been sent/);
+    const userHtml = '<img src=x onerror="alert(1)">';
+    const response = await onRequestPost({request: request({...valid, message: userHtml}, {Accept: 'text/html'}), env});
+    const html = await response.text();
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type'), /text\/html/);
+    assert.match(html, /Your enquiry has been sent/);
+    assert.match(html, /href="#enquiry-result">Skip to content/);
+    assert.match(html, /<main id="enquiry-result"[^>]*tabindex="-1"/);
+    assert.match(html, /<body id="top">/);
+    assert.match(html, /href="\/assets\/fonts\/dm-sans-latin-variable\.woff2"[^>]*as="font"/);
+    assert.match(html, /<meta name="robots" content="noindex">/);
+    for (const path of ['privacy', 'terms', 'cookies', 'accessibility']) assert.ok(html.includes(`href="/${path}"`));
+    assert.ok(!html.includes(userHtml));
+    const failure = await onRequestPost({request: request(valid, {Accept: 'text/html'}), env: {}});
+    const failureHtml = await failure.text();
+    assert.equal(failure.status, 503);
+    assert.match(failureHtml, /Your enquiry could not be sent/);
+    assert.doesNotMatch(failureHtml, /Your enquiry has been sent/);
+    assert.match(failureHtml, /href="\/#contact"/);
+    assert.match(failureHtml, /href="\/privacy"/);
   } finally {globalThis.fetch = original;}
 });
 test('analytics are restricted to fixed labels and respect privacy signals', async () => {

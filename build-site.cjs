@@ -6,7 +6,7 @@ const output = path.resolve(root, 'dist');
 if (path.dirname(output) !== root || path.basename(output) !== 'dist') throw new Error('Unexpected build output path');
 fs.rmSync(output, {recursive: true, force: true});
 fs.mkdirSync(output, {recursive: true});
-for (const name of ['index.html', 'privacy.html', '404.html', 'styles.css', 'main.js', 'favicon.ico',
+for (const name of ['index.html', 'styles.css', 'main.js', 'favicon.ico',
   'site.webmanifest', 'robots.txt', 'assets', '_headers', '_redirects', '_routes.json']) {
   fs.cpSync(path.join(root, name), path.join(output, name), {recursive: true});
 }

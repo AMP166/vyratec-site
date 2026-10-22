@@ -7,7 +7,7 @@ import * as events from './functions/api/events.js';
 import './build-site.cjs';
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), 'dist');
 const redirects = (await readFile(path.join(root, '_redirects'), 'utf8')).split('\n').filter(line => line.trim() && !line.startsWith('#')).map(line => line.trim().split(/\s+/));
-const mime = {'.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.ico': 'image/x-icon', '.xml': 'application/xml', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain'};
+const mime = {'.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.ico': 'image/x-icon', '.xml': 'application/xml', '.webmanifest': 'application/manifest+json', '.txt': 'text/plain', '.woff2': 'font/woff2'};
 // This preview runs the real validation/error path. It never mocks mail delivery.
 // Email credentials are read from the process environment, never bundled into assets.
 const server = http.createServer(async (req, res) => {

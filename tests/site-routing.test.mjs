@@ -26,7 +26,7 @@ test('missing and nested URLs return the branded page with a genuine 404 status'
 });
 
 test('legacy crawler/privacy URLs redirect to the authoritative resources',async()=>{
-  for(const [oldPath,newPath] of [['/robots.xml','/robots.txt'],['/privacy.html','/privacy'],['/index.html','/']]) {
+  for(const [oldPath,newPath] of [['/robots.xml','/robots.txt'],['/privacy.html','/privacy'],['/privacy-policy','/privacy'],['/terms.html','/terms'],['/terms-of-use','/terms'],['/cookies.html','/cookies'],['/cookie-policy','/cookies'],['/accessibility.html','/accessibility'],['/index.html','/']]) {
     const response=await fetch(base+oldPath,{redirect:'manual'});
     assert.equal(response.status,301);
     assert.equal(response.headers.get('location'),newPath);
@@ -45,15 +45,18 @@ test('the sitemap lists real, unique canonical pages with distinct search metada
   const sitemap=await sitemapResponse.text();
   assert.match(sitemap,/<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/);
   const urls=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]);
-  assert.equal(urls.length,6);
-  assert.equal(new Set(urls).size,6);
+  assert.equal(urls.length,9);
+  assert.equal(new Set(urls).size,9);
   const titles=new Set(), descriptions=new Set();
   for(const url of urls) {
     const response=await fetch(base+new URL(url).pathname,{redirect:'manual'});
     assert.equal(response.status,200,url);
     const html=await response.text();
     assert.equal((html.match(/<h1\b/g)||[]).length,1,url);
+    const visibleText=html.split(/<body\b[^>]*>/)[1].replace(/<[^>]*>/g,'');
+    assert.doesNotMatch(visibleText,/shop@vyratec\.com/);
     assert.ok(html.includes(`<link rel="canonical" href="${url}">`),url);
+    for(const policy of ['/privacy','/terms','/cookies','/accessibility']) assert.ok(html.includes(`href="${policy}"`),`${url} missing ${policy}`);
     const title=html.match(/<title>(.*?)<\/title>/)[1];
     const description=html.match(/<meta name="description" content="([^"]+)"/)[1];
     assert.ok(!titles.has(title),'duplicate title'); titles.add(title);
@@ -64,4 +67,22 @@ test('the sitemap lists real, unique canonical pages with distinct search metada
       assert.match(html,/href="\/\?programme=[a-z-]+#contact"/);
     }
   }
+});
+
+test('information pages and the error route share working navigation and local fonts', async()=>{
+  for(const route of ['/privacy','/terms','/cookies','/accessibility','/missing-policy-page']) {
+    const response=await fetch(base+route);
+    assert.equal(response.status,route.startsWith('/missing')?404:200);
+    const html=await response.text();
+    assert.match(html, /aria-label="Website information"/);
+    assert.match(html, /<body id="top">/);
+    assert.match(html, /href="#main">Skip to content/);
+    assert.doesNotMatch(html,/https:\/\/fonts\.(?:googleapis|gstatic)\.com/);
+    assert.match(html,/\/assets\/fonts\/dm-sans-latin-variable\.woff2/);
+    for(const link of ['/privacy','/terms','/cookies','/accessibility']) assert.ok(html.includes(`href="${link}"`));
+  }
+  const font=await fetch(base+'/assets/fonts/dm-sans-latin-variable.woff2');
+  assert.equal(font.status,200);
+  assert.match(font.headers.get('content-type'),/font\/woff2/);
+  assert.equal(new TextDecoder().decode((await font.arrayBuffer()).slice(0,4)),'wOF2');
 });

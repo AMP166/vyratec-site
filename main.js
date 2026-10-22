@@ -91,7 +91,7 @@
         : error.message;
       const email = document.createElement('a');
       email.href = 'mailto:shop@vyratec.com';
-      email.textContent = 'Email shop@vyratec.com';
+      email.textContent = 'Contact us';
       message.append(document.createElement('br'), email);
       message.focus();
     } finally {

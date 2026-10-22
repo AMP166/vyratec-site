@@ -7,6 +7,7 @@ module.exports = function buildPages(root, output) {
   const home = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   const header = home.match(/<header\b[\s\S]*?<\/header>/)[0].replaceAll('href="#', 'href="/#');
   const footer = home.match(/<footer\b[\s\S]*?<\/footer>/)[0].replace(/href="#(?!top)/g, 'href="/#').replace('href="#top" aria-label="Vyratec home"', 'href="/" aria-label="Vyratec home"');
+  const information = require('./build-information.cjs')(root, output, header, footer);
   fs.mkdirSync(path.join(output, 'training'), {recursive:true});
   for (const programme of programmes) {
     if (!/^[a-z-]+$/.test(programme.slug)) throw new Error('Invalid programme slug');
@@ -27,7 +28,7 @@ module.exports = function buildPages(root, output) {
 <meta name="theme-color" content="#102744"><link rel="canonical" href="${url}">
 <meta property="og:title" content="${escape(programme.title)}"><meta property="og:description" content="${escape(programme.description)}"><meta property="og:type" content="website"><meta property="og:url" content="${url}"><meta property="og:locale" content="en_AU"><meta property="og:site_name" content="Vyratec"><meta property="og:image" content="https://vyratec.com/assets/vyratec-og.png">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escape(programme.title)}"><meta name="twitter:description" content="${escape(programme.description)}"><meta name="twitter:image" content="https://vyratec.com/assets/vyratec-og.png">
-<link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/styles.css"><script defer src="/main.js"></script>
+<link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="preload" href="/assets/fonts/dm-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/styles.css"><script defer src="/main.js"></script>
 <script type="application/ld+json">${JSON.stringify(schema).replaceAll('<','\\u003c')}</script>
 </head><body id="top"><a class="skip-link" href="#main">Skip to content</a>${programmeHeader}
 <main id="main" class="wrap training-page">
@@ -39,6 +40,6 @@ module.exports = function buildPages(root, output) {
 </main>${programmeFooter}</body></html>`;
     fs.writeFileSync(path.join(output, 'training', `${programme.slug}.html`), html);
   }
-  const urls = [{url:'https://vyratec.com/',lastmod:'2026-10-14'},...programmes.map(p=>({url:`https://vyratec.com/training/${p.slug}`,lastmod:p.lastmod})),{url:'https://vyratec.com/privacy',lastmod:'2026-10-14'}];
+  const urls = [{url:'https://vyratec.com/',lastmod:'2026-10-22'},...programmes.map(p=>({url:`https://vyratec.com/training/${p.slug}`,lastmod:p.lastmod})),...information.map(p=>({url:`https://vyratec.com/${p.slug}`,lastmod:p.updated}))];
   fs.writeFileSync(path.join(output, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(item=>`  <url><loc>${item.url}</loc><lastmod>${item.lastmod}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 };

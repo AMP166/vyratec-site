@@ -1,12 +1,39 @@
 import {json, isSameOrigin, readBody, recordEvent, interests} from '../_lib.mjs';
 
-const mailError = 'We couldn’t send your enquiry. Please try again or email shop@vyratec.com.';
+const mailError = 'We couldn’t send your enquiry. Please try again or contact us directly.';
 const escapeHtml = value => value.replace(/[&<>"']/g, char => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]));
 function reply(request, payload, status = 200) {
   if (request.headers.get('accept')?.includes('application/json')) return json(payload, status);
   const title = payload.ok ? 'Your enquiry has been sent.' : 'Your enquiry could not be sent.';
   const detail = payload.ok ? `Thank you. We’ll reply to your work email. Enquiry reference: ${payload.reference}` : payload.error;
-  return new Response(`<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Training enquiry | Vyratec</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/styles.css"></head><body><main class="wrap privacy-page"><a class="brand" href="/"><img src="/assets/vyratec-wordmark-transparent.png" width="182" alt="Vyratec"></a><h1>${title}</h1><p>${escapeHtml(detail)}</p><p><a href="mailto:shop@vyratec.com">shop@vyratec.com</a></p><a class="text-link" href="/#contact">Return to Vyratec <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a></main></body></html>`, {status, headers: {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}});
+  return new Response(`<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Training enquiry | Vyratec</title><meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <link rel="preload" href="/assets/fonts/dm-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body id="top">
+  <a class="skip-link" href="#enquiry-result">Skip to content</a>
+  <header class="site-header"><div class="wrap header-inner">
+    <a class="brand" href="/" aria-label="Vyratec home"><img src="/assets/vyratec-wordmark-transparent.png" width="182" height="41" alt="Vyratec"></a>
+    <a class="text-link error-header-link" href="/">Home</a>
+  </div></header>
+  <main id="enquiry-result" class="wrap privacy-page" tabindex="-1">
+    <p class="eyebrow">Training enquiry</p>
+    <h1>${title}</h1>
+    <p>${escapeHtml(detail)}</p>
+    <p>For any questions, <a href="mailto:shop@vyratec.com">contact us</a>.</p>
+    <div class="error-actions"><a class="text-link" href="/#contact">Return to the enquiry form <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a></div>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-top">
+    <div class="footer-brand"><a class="brand" href="/" aria-label="Vyratec home"><img src="/assets/vyratec-wordmark-light.png" width="182" height="41" alt="Vyratec"></a><p>Practical AI training for Australian workplaces.</p></div>
+    <nav aria-label="Contact and navigation"><a href="/">Home</a><a href="/#contact">Training enquiries</a><a href="mailto:shop@vyratec.com">Contact us</a></nav>
+    <nav aria-label="Website information"><a href="/privacy">Privacy policy</a><a href="/terms">Terms of use</a><a href="/cookies">Cookie notice</a><a href="/accessibility">Accessibility</a></nav>
+  </div><div class="wrap footer-bottom"><p>© ${new Date().getUTCFullYear()} Vyratec</p><a href="#top">Back to top</a></div></footer>
+</body></html>`, {status, headers: {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}});
 }
 
 export async function onRequestPost({request, env}) {

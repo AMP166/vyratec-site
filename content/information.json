@@ -1,0 +1,158 @@
+[
+  {
+    "slug": "privacy",
+    "title": "Privacy policy",
+    "description": "How Vyratec collects, uses and protects information when you visit the website or enquire about corporate AI training.",
+    "intro": "How we handle your information, and how to contact us about it.",
+    "updated": "2026-10-22",
+    "sections": [
+      {
+        "id": "about",
+        "heading": "Who this policy covers",
+        "html": "<p>This policy explains how Vyratec handles personal information through vyratec.com and related training enquiries. You can <a href=\"mailto:shop@vyratec.com\">contact us</a> with questions about this policy or your information.</p>"
+      },
+      {
+        "id": "collection",
+        "heading": "Information you give us",
+        "html": "<p>Our enquiry form collects your name, work email, organisation, training interest and the requirements you enter. If you email us, we also receive your email address and the content of your correspondence.</p><p>We use these details to respond, understand your training needs, prepare proposals and manage any resulting business relationship. Sending an enquiry does not subscribe you to marketing. You can browse without completing the form; its required fields help us respond to a training enquiry. You can also contact us by email.</p><p>Please provide only information you are authorised to share, and leave out sensitive personal information and confidential business material.</p>"
+      },
+      {
+        "id": "providers",
+        "heading": "Who receives the information",
+        "html": "<p>Cloudflare hosts the website and processes requests. Resend delivers enquiry notifications to our business inbox and a private copy to the business operator. Our email providers store and process the resulting correspondence. We share information with these providers to operate the website and respond to enquiries, and may disclose information where required by law. We do not sell enquiry information.</p><p>These services operate internationally. Information may be processed outside Australia, including in the United States and other countries where providers and their service providers operate. Their locations can change. Provider information is available from <a href=\"https://www.cloudflare.com/privacypolicy/\">Cloudflare</a> and <a href=\"https://resend.com/legal/subprocessors\">Resend</a>. You can contact us about the providers involved in your enquiry.</p>"
+      },
+      {
+        "id": "activity",
+        "heading": "Website activity and technical information",
+        "html": "<p>Our custom measurement system counts page visits, enquiry-button clicks, form starts and successful enquiries. It records approved event and location labels. A successful enquiry also records an email-provider receipt to help identify duplicate delivery attempts. Custom measurement records exclude your form contents, IP address, visitor identifiers and URL query parameters.</p><p>Our custom event collection respects browser Do Not Track and Global Privacy Control signals. Cloudflare Web Analytics separately measures aggregate visits and website performance without analytics cookies or local storage. Cloudflare also processes technical request information, such as IP addresses and request headers, for hosting, security and operations. These infrastructure processes are separate from our custom event records.</p><p>Fonts and brand images are served from this website. For more detail about cookies and browser controls, read our <a href=\"/cookies\">cookie notice</a>.</p>"
+      },
+      {
+        "id": "retention",
+        "heading": "Storage, security and retention",
+        "html": "<p>We keep enquiry correspondence for as long as it is needed to respond, manage a business relationship and meet applicable recordkeeping requirements. Provider logs and measurement records follow the relevant services’ retention settings.</p><p>We use HTTPS, restricted service credentials and access controls to help protect information. We ask you not to send confidential material through the public enquiry form.</p>"
+      },
+      {
+        "id": "requests",
+        "heading": "Access, correction and deletion requests",
+        "html": "<p><a href=\"mailto:shop@vyratec.com\">Contact us</a> to ask about the personal information we hold about you, request a correction, or ask us to delete information we no longer need. We may need to confirm your identity before acting. We consider requests alongside records we need to retain and explain any limits that apply.</p>"
+      },
+      {
+        "id": "complaints",
+        "heading": "Privacy concerns and complaints",
+        "html": "<p>If you have a privacy concern, please contact us with the details and the outcome you are seeking. We will review the matter and aim to respond within 30 days. If more time is needed, we will let you know.</p><p>If you remain dissatisfied, external complaint avenues may be available, including the <a href=\"https://www.oaic.gov.au/privacy/privacy-complaints\">Office of the Australian Information Commissioner</a> where applicable.</p>"
+      },
+      {
+        "id": "updates",
+        "heading": "Updates to this policy",
+        "html": "<p>We may update this policy as our services or information practices change. The current version and its update date will be published on this page.</p>"
+      }
+    ]
+  },
+  {
+    "slug": "terms",
+    "title": "Terms of use",
+    "description": "Terms for using the Vyratec website, sharing its content and making a corporate AI training enquiry.",
+    "intro": "Straightforward terms for using this website and making a training enquiry.",
+    "updated": "2026-10-22",
+    "sections": [
+      {
+        "id": "scope",
+        "heading": "Using this website",
+        "html": "<p>These terms explain the basis on which Vyratec makes vyratec.com available. Please use the website lawfully and in a way that respects other visitors, our systems and the rights of others. Please <a href=\"mailto:shop@vyratec.com\">contact us</a> with any questions.</p>"
+      },
+      {
+        "id": "information",
+        "heading": "Programme information",
+        "html": "<p>Our programme descriptions explain possible training formats, audiences and subject matter. Content, duration, delivery, availability and fees are confirmed in a proposal for your organisation. Website examples illustrate a training approach; they are not promises of a particular business result.</p><p>We aim to keep information accurate and useful. If a detail matters to a purchasing decision, please confirm it with us. We may update the website and programme information over time.</p>"
+      },
+      {
+        "id": "enquiries",
+        "heading": "Enquiries and training agreements",
+        "html": "<p>Sending an enquiry starts a conversation. It does not reserve a date, book training, require a payment or create a training agreement.</p><p>The agreed scope, fees, scheduling, cancellation arrangements and any other commercial terms are documented separately before a training engagement is confirmed.</p>"
+      },
+      {
+        "id": "materials",
+        "heading": "Website materials and brand assets",
+        "html": "<p>You may view this website and share links to it for normal personal or business use. You may quote short extracts with clear attribution to Vyratec and a link to the source. Please contact us before reproducing substantial content or using our materials commercially.</p><p>Vyratec’s original website materials are protected by intellectual property rights. Third-party names, logos and trademarks, including Mercedes-Benz and NSP, belong to their respective owners. Experience references describe the work stated on the website and should not be read as a current client relationship or endorsement.</p>"
+      },
+      {
+        "id": "conduct",
+        "heading": "Responsible use",
+        "html": "<p>Please do not attempt unauthorised access, disrupt the website, introduce malicious code, impersonate someone or submit unlawful or misleading material. Use the enquiry form for relevant training enquiries and only share information you are authorised to provide.</p>"
+      },
+      {
+        "id": "links",
+        "heading": "External links and availability",
+        "html": "<p>Links to third-party websites are provided where useful. Those services have their own information, terms and privacy practices. We do not control their content or availability.</p><p>The website may be temporarily unavailable during maintenance or service interruptions. If the enquiry form is unavailable, <a href=\"mailto:shop@vyratec.com\">contact us</a> with any questions.</p>"
+      },
+      {
+        "id": "rights",
+        "heading": "Your rights",
+        "html": "<p>Nothing in these terms excludes or limits rights or remedies that cannot lawfully be excluded, including under the Australian Consumer Law.</p>"
+      },
+      {
+        "id": "privacy",
+        "heading": "Privacy and updates",
+        "html": "<p>Our <a href=\"/privacy\">privacy policy</a> explains how we handle personal information, and our <a href=\"/cookies\">cookie notice</a> explains website measurement and browser controls.</p><p>We may update these website terms. The version published on this page includes its last update date. Any agreed training contract is governed by its separately agreed terms.</p>"
+      }
+    ]
+  },
+  {
+    "slug": "cookies",
+    "title": "Cookie notice",
+    "description": "Cookies, cookieless website analytics and browser privacy controls on the Vyratec corporate training website.",
+    "intro": "What this website uses in your browser, and the controls available to you.",
+    "updated": "2026-10-22",
+    "sections": [
+      {
+        "id": "overview",
+        "heading": "Cookies and browser storage",
+        "html": "<p>Cookies are small files that a website can store in your browser. Local storage is another way a website can remember information on your device.</p><p>Vyratec’s application code does not set cookies or use local storage to identify returning visitors. We do not use advertising cookies, retargeting pixels or social-media embeds. Form fields and an enquiry retry reference are held in memory while the page is open.</p>"
+      },
+      {
+        "id": "measurement",
+        "heading": "Cookieless measurement",
+        "html": "<p>Cloudflare Web Analytics measures aggregate traffic and website performance without analytics cookies or local storage. Our separate custom measurement records page visits, enquiry-button clicks, form starts and successful enquiries. It does not use a persistent browser identifier.</p><p>Custom measurement excludes form contents, IP addresses and URL query parameters. Successful enquiry records include an email-provider receipt to help identify duplicate delivery attempts. Our <a href=\"/privacy\">privacy policy</a> explains the distinction between those records and infrastructure request information.</p>"
+      },
+      {
+        "id": "security",
+        "heading": "Hosting and security cookies",
+        "html": "<p>Cloudflare may use essential security cookies if it needs to check that a request is genuine or protect the website. The cookies used depend on the security features applied to a request. These are separate from advertising or visitor profiling.</p><p>Cloudflare explains its security cookies and their lifetimes in its <a href=\"https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/\">cookie reference</a>.</p>"
+      },
+      {
+        "id": "controls",
+        "heading": "Your browser controls",
+        "html": "<p>You can use your browser settings to inspect, block or delete cookies. Blocking essential security cookies may affect a security check or access to the website. The enquiry form remains available without accepting advertising cookies.</p><p>Our custom event collection stops when the browser sends Do Not Track or Global Privacy Control. This applies to our custom events; it does not disable the hosting provider’s security, operational processing or separate Web Analytics service.</p>"
+      },
+      {
+        "id": "changes",
+        "heading": "Questions and changes",
+        "html": "<p><a href=\"mailto:shop@vyratec.com\">Contact us</a> with questions about this notice. If we introduce new browser-storage or tracking features, we will update this page and add any relevant choices.</p>"
+      }
+    ]
+  },
+  {
+    "slug": "accessibility",
+    "title": "Accessibility",
+    "description": "Accessibility features and assistance for visitors using the Vyratec corporate AI training website.",
+    "intro": "We want prospective clients to be able to explore our training and contact us with confidence.",
+    "updated": "2026-10-22",
+    "sections": [
+      {
+        "id": "features",
+        "heading": "Using the website",
+        "html": "<p>The website includes keyboard navigation, visible focus indicators, a skip-to-content link, labelled form fields, text alternatives for meaningful images and layouts that adapt to smaller screens. It follows your device’s reduced-motion preference for scrolling and transitions.</p><p>Programme information and policy pages are available as regular HTML. The enquiry form also has a submission path when JavaScript is unavailable.</p>"
+      },
+      {
+        "id": "help",
+        "heading": "Request help or another format",
+        "html": "<p>If you have difficulty using any part of the website, <a href=\"mailto:shop@vyratec.com\">contact us</a>. Include the page, what you were trying to do and any format or communication support that would help. Please share only the details you are comfortable providing.</p><p>We can discuss programme details and training requirements directly by email. Accessibility requirements for a workshop can be included when we scope the delivery format with your organisation.</p>"
+      },
+      {
+        "id": "feedback",
+        "heading": "Improving access",
+        "html": "<p>We review accessibility as we update the website. Feedback about a barrier helps us identify and resolve issues. We aim to provide a practical alternative while investigating a reported problem.</p>"
+      }
+    ]
+  }
+]
