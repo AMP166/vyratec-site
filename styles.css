@@ -1440,6 +1440,9 @@ h2 {
 .experience-strip>p { font-size:14px; color:var(--muted); max-width:200px; margin:0 }
 .experience-strip>a { display:flex; align-items:center; gap:20px; font-size:14px; line-height:1.55; font-weight:550; justify-self:center }
 .experience-strip>a:hover { color:var(--blue) }
+.experience-strip-copy { display:flex; flex-direction:column; gap:5px; min-width:0 }
+.experience-strip-copy strong { font-size:14px; font-weight:600; line-height:1.5 }
+.experience-strip-service { font-size:13px; font-weight:400; color:var(--muted); line-height:1.55 }
 .experience-strip img { flex-shrink:0; object-fit:contain }
 .experience-strip a:last-child img { filter:brightness(0) }
 .capability { display:block }
@@ -1543,7 +1546,7 @@ h2 {
   .hero-description { font-size:16px }
   .hero-actions { gap:20px }
   .hero-actions .button { font-size:14px; padding:17px 19px }
-  .experience-strip { grid-template-columns:1fr 1fr; gap:20px 18px; padding-block:22px }
+  .experience-strip { grid-template-columns:1fr; gap:22px; padding-block:24px }
   .experience-strip>p { grid-column:1/-1; max-width:none; font-size:14px }
   .experience-strip>a { justify-self:start; gap:12px; font-size:13px }
   .experience-strip img { width:32px; height:36px }
@@ -1594,7 +1597,7 @@ h2 {
 }
 @media(max-width:380px) {
   .hero h1 { font-size:36px }
-  .experience-strip>a { gap:9px; font-size:12px }
+  .experience-strip>a { gap:12px }
   .information-index ol { columns:1 }
   .footer-top { grid-template-columns:1fr; gap:28px }
   .footer-brand { grid-column:auto }
