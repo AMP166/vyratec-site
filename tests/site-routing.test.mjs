@@ -26,7 +26,7 @@ test('missing and nested URLs return the branded page with a genuine 404 status'
 });
 
 test('legacy crawler/privacy URLs redirect to the authoritative resources',async()=>{
-  for(const [oldPath,newPath] of [['/robots.xml','/robots.txt'],['/privacy.html','/privacy'],['/privacy-policy','/privacy'],['/terms.html','/terms'],['/terms-of-use','/terms'],['/cookies.html','/cookies'],['/cookie-policy','/cookies'],['/accessibility.html','/accessibility'],['/index.html','/']]) {
+  for(const [oldPath,newPath] of [['/robots.xml','/robots.txt'],['/privacy.html','/privacy'],['/privacy-policy','/privacy'],['/terms.html','/terms'],['/terms-of-use','/terms'],['/cookies.html','/cookies'],['/cookie-policy','/cookies'],['/accessibility.html','/accessibility'],['/index.html','/'],['/assets/training-structure.svg','/#hero-process']]) {
     const response=await fetch(base+oldPath,{redirect:'manual'});
     assert.equal(response.status,301);
     assert.equal(response.headers.get('location'),newPath);

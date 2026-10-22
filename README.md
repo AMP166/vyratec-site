@@ -98,6 +98,7 @@ Core positioning is corporate training in ChatGPT, Claude, Microsoft Copilot and
 
 - Vyratec logo, light wordmark, favicon and touch icons: supplied in the existing project.
 - Hero process: original inline vector artwork created for Vyratec, with four layers representing Understand, Tailor, Practise and Apply. It has no standalone public image asset.
+- The old `/assets/training-structure.svg` URL redirects to `/#hero-process` so existing links open the interactive component. Previously cached copies and screenshots cannot be revoked.
 - NSP: official site's logo, https://www.nspsurfboards.com/wp-content/uploads/2024/11/NSP-Logo-White-spaced-out-V03.webp ; rendered in monochrome with CSS.
 - Mercedes-Benz: https://commons.wikimedia.org/wiki/File:Mercedes-Benz_Star_2022.svg ; chrome three-dimensional star, trademark rights retained by its owner.
 - Aroona Surf: official header wordmark, https://www.aroonasurf.shop/cdn/shop/files/Logo_C.webp?v=1691039817 ; original asset retained, displayed in monochrome on light backgrounds with CSS. The owner requested the company entry on 22 October 2026.
