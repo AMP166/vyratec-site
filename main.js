@@ -37,6 +37,50 @@
   }));
   const year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();
+  const enhanceHeroProcess = () => {
+    const root = document.getElementById('hero-process');
+    if (!root) return;
+    const controls = root.querySelector('#hero-process-controls');
+    const svg = root.querySelector('svg');
+    const buttons = [...root.querySelectorAll('button[data-process-step]')];
+    const layers = [...root.querySelectorAll('g[data-process-layer]')];
+    const panels = [...root.querySelectorAll('[data-process-panel]')];
+    const completeSequence = (elements, key) => elements.length === 4
+      && ['0', '1', '2', '3'].every(index => elements.filter(element => element.dataset[key] === index).length === 1);
+    // Leave every step readable if the diagram and its controls do not match.
+    if (!controls || !svg || !completeSequence(buttons, 'processStep')
+      || !completeSequence(layers, 'processLayer') || !completeSequence(panels, 'processPanel')) return;
+    const orderedButtons = ['0', '1', '2', '3'].map(index => buttons.find(button => button.dataset.processStep === index));
+    const orderedLayers = ['0', '1', '2', '3'].map(index => layers.find(layer => layer.dataset.processLayer === index));
+    const orderedPanels = ['0', '1', '2', '3'].map(index => panels.find(panel => panel.dataset.processPanel === index));
+    if (orderedButtons.some((button, index) => !controls.contains(button)
+      || button.getAttribute('aria-controls') !== orderedPanels[index].id
+      || !svg.contains(orderedLayers[index]))) return;
+    let activeStep = -1;
+    const selectStep = index => {
+      if (index === activeStep) return;
+      activeStep = index;
+      orderedButtons.forEach((button, step) => {
+        const active = step === index;
+        button.setAttribute('aria-pressed', String(active));
+        button.classList.toggle('is-active', active);
+        orderedLayers[step].classList.toggle('is-active', active);
+        orderedPanels[step].hidden = !active;
+      });
+    };
+    orderedButtons.forEach((button, index) => {
+      // Native buttons retain their normal Tab, Enter and Space behaviour.
+      ['pointerenter', 'focus', 'click'].forEach(event => button.addEventListener(event, () => selectStep(index)));
+    });
+    orderedLayers.forEach((layer, index) => {
+      ['pointerenter', 'click'].forEach(event => layer.addEventListener(event, () => selectStep(index)));
+    });
+    svg.addEventListener('dragstart', event => event.preventDefault());
+    selectStep(0);
+    root.dataset.enhanced = 'true';
+    controls.hidden = false;
+  };
+  enhanceHeroProcess();
   const trainingRequest = document.getElementById('training-enquiry');
   const callbackRequest = document.getElementById('callback');
   const openRequest = request => {

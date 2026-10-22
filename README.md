@@ -85,7 +85,7 @@ References: [ClickSend SMS API](https://developers.clicksend.com/docs/messaging/
 - `build-information.cjs`: shared information-page layout and branded 404 fallback.
 - `content/sydney.json`: North Sydney base, Sydney workshop delivery and preparation guidance for `/ai-training-sydney`.
 - `build-location.cjs`: static Sydney delivery-page layout with the shared header/footer and service schema.
-- `assets/training-structure.svg`: original technical hero illustration, editable as SVG; displayed on desktop, omitted on small screens to keep the mobile introduction focused.
+- `index.html` (`#hero-process`), `styles.css` and `main.js`: inline SVG four-layer training approach. Native buttons mirror pointer interaction for keyboard and touch, and all four descriptions remain readable without JavaScript. Keep the four hero descriptions aligned with the approach steps below.
 
 When changing programme labels, update `functions/_lib.mjs` and the form options together. Preserve the existing Vyratec wordmarks and favicons. The experience section covers manufacturing AI platform development, supply chain management training and Aroona Surf's customer-facing product recommendation chatbot. The owner confirmed ongoing chatbot maintenance, product data across hundreds of surfboard variants, personalised volume calculations and lead capture. Company entries are descriptions of work, with no fabricated testimonials, ROI figures or endorsement claims. Public pricing and participant caps from the private planning document are not published.
 
@@ -97,7 +97,7 @@ Core positioning is corporate training in ChatGPT, Claude, Microsoft Copilot and
 - The local AI laptop and server drawings are original inline SVG, used as decorative illustrations of execution environments.
 
 - Vyratec logo, light wordmark, favicon and touch icons: supplied in the existing project.
-- Hero illustration: original vector artwork created for this redesign.
+- Hero process: original inline vector artwork created for Vyratec, with four layers representing Understand, Tailor, Practise and Apply. It has no standalone public image asset.
 - NSP: official site's logo, https://www.nspsurfboards.com/wp-content/uploads/2024/11/NSP-Logo-White-spaced-out-V03.webp ; rendered in monochrome with CSS.
 - Mercedes-Benz: https://commons.wikimedia.org/wiki/File:Mercedes-Benz_Star_2022.svg ; chrome three-dimensional star, trademark rights retained by its owner.
 - Aroona Surf: official header wordmark, https://www.aroonasurf.shop/cdn/shop/files/Logo_C.webp?v=1691039817 ; original asset retained, displayed in monochrome on light backgrounds with CSS. The owner requested the company entry on 22 October 2026.
