@@ -84,7 +84,12 @@
   const enhanceMotion = () => {
     const page = document.documentElement;
     const controls = [...document.querySelectorAll('button[data-motion-toggle]')];
-    const graphics = [...document.querySelectorAll('.hero-process, .programme-row, .approach-steps li, .workflow-example, .model-range')];
+    const graphics = [...document.querySelectorAll([
+      '.hero-process', '.programme-row', '.approach-steps li', '.workflow-example', '.model-range',
+      '.capability', '.experience-record', '.section-heading', '.local-ai-priorities article',
+      '.contact-copy', '.training-facts', '.training-aside', '.programme-section', '.training-intro',
+      '.information-heading', '.information-content section', '.information-contact', '.error-code', '.footer-brand'
+    ].join(', '))];
     let observer;
     let userPaused = false;
     const setPageVisibility = () => { page.dataset.pageVisible = String(!document.hidden); };
@@ -140,6 +145,53 @@
     }
   };
   enhanceMotion();
+  const enhanceSectionNavigation = () => {
+    const main = document.getElementById('main');
+    const sectionIds = ['capabilities', 'programmes', 'approach', 'experience', 'local-ai'];
+    const links = [...document.querySelectorAll('.desktop-nav a, #mobile-nav a')]
+      .filter(link => sectionIds.some(id => link.getAttribute('href') === `#${id}`));
+    // Programme and information pages link to /#section and retain their normal navigation.
+    if (!main || !links.length || sectionIds.some(id => !main.contains(document.getElementById(id)))
+      || typeof window.IntersectionObserver !== 'function') return;
+    const sections = [...main.children].filter(element => element.tagName === 'SECTION');
+    const visible = new Set();
+    let observer;
+    let resizeFrame;
+    const setCurrent = section => {
+      links.forEach(link => {
+        if (section && link.getAttribute('href') === `#${section.id}`) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    const observeSections = () => {
+      if (observer) observer.disconnect();
+      visible.clear();
+      setCurrent(null);
+      const height = window.innerHeight;
+      const headerHeight = document.querySelector('.header-inner')?.getBoundingClientRect().height || 0;
+      const readingLine = Math.max(0, Math.min(height - 2, Math.max(headerHeight + 24, height * 0.23)));
+      // A narrow reading band switches sections without watching every scroll event.
+      observer = new window.IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) visible.add(entry.target);
+          else visible.delete(entry.target);
+        });
+        setCurrent(sections.find(section => visible.has(section)));
+      }, {threshold: 0, rootMargin: `-${Math.floor(readingLine)}px 0px -${Math.max(0, Math.floor(height - readingLine - 2))}px 0px`});
+      sections.forEach(section => observer.observe(section));
+    };
+    try {
+      observeSections();
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(observeSections);
+      });
+    } catch {
+      if (observer) observer.disconnect();
+      setCurrent(null);
+    }
+  };
+  enhanceSectionNavigation();
   const trainingRequest = document.getElementById('training-enquiry');
   const callbackRequest = document.getElementById('callback');
   const openRequest = request => {
