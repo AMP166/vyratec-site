@@ -1572,7 +1572,7 @@ h2 {
 }
 @media(max-width:700px) {
   .header-inner { height:74px }
-  .hero-grid { grid-template-columns:1fr; padding-block:42px 36px }
+  .hero-grid { grid-template-columns:1fr; gap:0; padding-block:42px 36px }
   .hero h1 { font-size:clamp(37px,9.4vw,51px) }
   .hero-description { font-size:16px }
   .hero-actions { gap:20px }
@@ -1666,7 +1666,7 @@ h2 {
   }
 }
 
-/* Brand geometry and programme catalogue. All artwork is static, local SVG. */
+/* Brand geometry and programme catalogue. Artwork is local SVG. */
 .hero {
   background:linear-gradient(112deg,var(--paper) 62%,#e7eef4 62%);
 }
@@ -2295,7 +2295,7 @@ h2 {
   }
 }
 
-/* Inline training process: four layers, one selected step, no automatic motion. */
+/* Inline training process: four layers and one selected step. */
 .hero-local-note {
   margin:14px 0 0;
   color:var(--muted);
@@ -2491,4 +2491,325 @@ h2 {
   .process-slab.is-active .process-slab-art {
     transform:none;
   }
+}
+
+/* A working technical stage, with motion confined to the diagrams. */
+.hero-process {
+  position:relative;
+  padding:24px 26px 12px;
+  border:1px solid #3a5d7c;
+  background:linear-gradient(145deg,#0b2037,#153954);
+  color:#f3f8fd;
+  box-shadow:0 22px 55px -34px #10274480;
+}
+.hero-process::before {
+  content:'';
+  position:absolute;
+  top:-1px;
+  left:-1px;
+  width:84px;
+  height:3px;
+  background:#79baff;
+}
+.process-heading {
+  align-items:center;
+  border-bottom-color:#3c5a75;
+  gap:14px;
+}
+.process-heading p {
+  color:#eff6fc;
+}
+.process-instruction {
+  display:block;
+  margin-top:2px;
+  max-width:none;
+  text-align:left;
+  color:#b6cbdc;
+  font-size:11px;
+}
+.motion-toggle {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-width:108px;
+  min-height:44px;
+  padding:8px 7px;
+  border:1px solid transparent;
+  border-radius:0;
+  background:transparent;
+  color:#c4d8e9;
+  font-size:11px;
+  font-weight:500;
+  line-height:1.4;
+  white-space:nowrap;
+}
+.motion-toggle:hover {
+  color:#fff;
+  border-color:#587992;
+}
+.motion-toggle:focus-visible,
+.hero-process button:focus-visible {
+  outline-color:#9bcdff;
+  outline-offset:3px;
+}
+.motion-toggle-icon {
+  display:block;
+  width:9px;
+  height:10px;
+  border-inline:2px solid currentColor;
+  flex-shrink:0;
+}
+.motion-toggle[aria-pressed="true"] .motion-toggle-icon {
+  width:0;
+  height:0;
+  border:5px solid transparent;
+  border-right:0;
+  border-left:8px solid currentColor;
+}
+.process-grid-plane {
+  opacity:.16;
+}
+.process-circuit {
+  stroke:#4f7695;
+  opacity:.55;
+}
+.process-signal {
+  stroke:#8ac8ff;
+  stroke-width:1.8;
+  stroke-dasharray:18 240;
+  stroke-dashoffset:0;
+  opacity:.75;
+}
+.process-slab-art {
+  transition:transform .28s cubic-bezier(.2,.7,.2,1);
+}
+.process-slab-assembly {
+  transform-box:fill-box;
+  transform-origin:center;
+}
+.process-outline {
+  stroke:#7497b5;
+  stroke-width:.75px;
+}
+.process-slab.is-active .process-outline {
+  stroke:#93cbff;
+  stroke-width:2.2px;
+}
+.process-callout {
+  stroke:#7d9cb7;
+}
+.process-layer-number {
+  fill:#bdcfe0;
+}
+.process-slab.is-active .process-callout {
+  stroke:#93cbff;
+}
+.process-slab.is-active .process-layer-number {
+  fill:#b9ddff;
+}
+.process-step {
+  color:#bccfe0;
+  border-bottom-color:#4a6881;
+  font-size:12px;
+}
+.process-step.is-active {
+  color:#fff;
+  border-bottom-color:#91c8ff;
+}
+.process-step.is-active .process-step-number {
+  color:#a4d4ff;
+}
+.process-panels {
+  min-height:132px;
+}
+.process-panels h3 {
+  color:#f5f9fe;
+}
+.process-panels p {
+  color:#bfd0df;
+  font-size:13px;
+}
+.approach-steps li::after {
+  content:'';
+  position:absolute;
+  top:-2px;
+  left:0;
+  width:100%;
+  height:2px;
+  background:var(--blue);
+  transform-origin:left center;
+}
+.workflow-line>span {
+  position:relative;
+}
+.workflow-line>span::after {
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:-16px;
+  width:100%;
+  height:2px;
+  background:#92c9ff;
+  transform-origin:left center;
+}
+.footer-bottom .motion-toggle {
+  margin-left:auto;
+}
+.footer-bottom>a {
+  margin-left:12px;
+}
+@keyframes layer-assemble {
+  from { transform:translateY(32px); opacity:.15; }
+  to { transform:translateY(0); opacity:1; }
+}
+@keyframes signal-travel {
+  from { stroke-dashoffset:258; }
+  to { stroke-dashoffset:0; }
+}
+@keyframes connector-extend {
+  from { transform:scaleX(0); }
+  to { transform:scaleX(1); }
+}
+@keyframes hardware-trace {
+  from { stroke-dashoffset:100; }
+  to { stroke-dashoffset:0; }
+}
+@media(prefers-reduced-motion:no-preference) {
+  html[data-motion="running"] .hero-process.has-entered:not(.motion-complete) .process-slab-assembly {
+    animation:layer-assemble .64s cubic-bezier(.16,.75,.2,1) both;
+  }
+  html[data-motion="running"] .process-slab[data-process-layer="1"] .process-slab-assembly { animation-delay:.1s; }
+  html[data-motion="running"] .process-slab[data-process-layer="2"] .process-slab-assembly { animation-delay:.2s; }
+  html[data-motion="running"] .process-slab[data-process-layer="3"] .process-slab-assembly { animation-delay:.3s; }
+  html[data-motion="running"] .hero-process.is-in-view .process-signal {
+    animation:signal-travel 8s linear infinite;
+  }
+  html[data-motion="running"] .hero-process.is-in-view .process-signal-late { animation-delay:-3s; }
+  html[data-motion="running"] .hero-process.is-in-view .process-signal-short { animation-delay:-5s; }
+  html[data-motion="running"] .approach-steps li.has-entered:not(.motion-complete)::after {
+    animation:connector-extend .7s cubic-bezier(.2,.7,.2,1) both;
+  }
+  html[data-motion="running"] .approach-steps li:nth-child(2)::after { animation-delay:.12s; }
+  html[data-motion="running"] .approach-steps li:nth-child(3)::after { animation-delay:.24s; }
+  html[data-motion="running"] .approach-steps li:nth-child(4)::after { animation-delay:.36s; }
+  html[data-motion="running"] .workflow-example.has-entered:not(.motion-complete) .workflow-line>span::after {
+    animation:connector-extend .65s ease-out both;
+  }
+  html[data-motion="running"] .workflow-line>span:nth-child(2)::after { animation-delay:.2s; }
+  html[data-motion="running"] .workflow-line>span:nth-child(3)::after { animation-delay:.4s; }
+  html[data-motion="running"] .model-range.has-entered:not(.motion-complete) .model-hardware-accent {
+    stroke-dasharray:100;
+    animation:hardware-trace .9s ease-out both;
+  }
+  html[data-motion="running"] .model-endpoint+.model-endpoint .model-hardware-accent { animation-delay:.2s; }
+  html[data-motion="running"] :is(.button,.text-link,.footer-bottom>a) .arrow-icon {
+    transition:transform .22s cubic-bezier(.2,.7,.2,1);
+  }
+  html[data-motion="running"] :is(.button,.text-link):is(:hover,:focus-visible) .arrow-icon {
+    transform:translate(3px,-3px);
+  }
+  html[data-motion="running"] .text-link[href="#programmes"]:is(:hover,:focus-visible) .arrow-icon { transform:translateY(3px); }
+  html[data-motion="running"] .footer-bottom>a:is(:hover,:focus-visible) .arrow-icon { transform:translateY(-3px); }
+}
+html[data-page-visible="false"] :is(.process-signal,.process-slab-assembly,.programme-detail,.programme-entry-trace,.model-hardware-accent),
+html[data-page-visible="false"] .approach-steps li::after,
+html[data-page-visible="false"] .workflow-line>span::after {
+  animation-play-state:paused!important;
+}
+html[data-motion="paused"] .process-slab-art,
+html[data-motion="paused"] .process-slab.is-active .process-slab-art {
+  transition:none;
+  transform:none;
+}
+@media(max-width:1180px) {
+  .hero-process { padding:22px 20px 12px; }
+  .process-heading { align-items:center; gap:8px; }
+  .process-heading p { font-size:13px; }
+  .process-instruction { max-width:none; font-size:10px; }
+  .process-step { font-size:13px; }
+  .motion-toggle { min-width:100px; padding-inline:3px; font-size:10px; }
+  .process-panels { min-height:148px; }
+}
+@media(max-width:700px) {
+  .hero-process { padding:20px 18px 10px; margin-top:38px; border-top:1px solid #3a5d7c; }
+  .process-heading { padding-bottom:10px; border-bottom:1px solid #3c5a75; }
+  .process-heading p { font-size:14px; }
+  .process-instruction { font-size:10px; }
+  .process-scene { width:min(100%,340px); margin-top:8px; }
+  .process-step { font-size:14px; min-height:48px; }
+  .process-panels { min-height:145px; }
+  .process-panels p { font-size:13px; }
+  .motion-toggle { font-size:11px; }
+  .footer-bottom .motion-toggle { margin-left:0; }
+  .footer-bottom>a { margin-left:0; }
+}
+@media(max-width:380px) {
+  .hero-process { padding-inline:14px; }
+  .process-heading p { font-size:12px; }
+  .process-instruction { max-width:125px; }
+  .motion-toggle { min-width:92px; font-size:10px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .process-slab-art { transition:none; }
+  .process-slab.is-active .process-slab-art { transform:none; }
+}
+
+/* Programme diagrams: a single connector trace on entry, then deliberate
+   interaction feedback. The complete diagram remains visible without motion. */
+.programme-mark {
+  overflow:visible;
+}
+.programme-entry-trace {
+  stroke-dasharray:1;
+  stroke-dashoffset:0;
+}
+.programme-signal {
+  fill:none;
+  stroke:#2589ff;
+  stroke-width:1.8;
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
+  opacity:0;
+}
+@media (prefers-reduced-motion:no-preference) {
+  html[data-motion="running"] .programme-row.motion-ready.has-entered:not(.motion-complete) .programme-entry-trace {
+    animation:programme-connect .58s cubic-bezier(.2,.7,.2,1) both;
+  }
+  html[data-motion="running"] .programme-row.motion-ready.has-entered:not(.motion-complete) .programme-detail:not(.programme-entry-trace) {
+    animation:programme-detail-in .58s ease-out both;
+  }
+  html:not([data-motion="paused"]) .programme-row .programme-signal {
+    transition:stroke-dashoffset .48s cubic-bezier(.2,.7,.2,1),opacity .18s ease;
+  }
+}
+@media (prefers-reduced-motion:no-preference) and (hover:hover) and (pointer:fine) {
+  html:not([data-motion="paused"]) .programme-row:focus-within .programme-signal,
+  html:not([data-motion="paused"]) .programme-row:hover .programme-signal {
+    stroke-dashoffset:0;
+    opacity:1;
+  }
+}
+@keyframes programme-connect {
+  from { stroke-dashoffset:1; }
+  to { stroke-dashoffset:0; }
+}
+@keyframes programme-detail-in {
+  from { opacity:.35; }
+  to { opacity:1; }
+}
+@media (prefers-reduced-motion:reduce), (hover:none), (pointer:coarse) {
+  .programme-row .programme-signal {
+    transition:none;
+    stroke-dashoffset:1;
+    opacity:0;
+  }
+}
+html[data-motion="paused"] .programme-row .programme-entry-trace,
+html[data-motion="paused"] .programme-row .programme-detail {
+  animation:none;
+}
+html[data-motion="paused"] .programme-row .programme-signal {
+  transition:none;
+  opacity:0;
 }

@@ -81,6 +81,65 @@
     controls.hidden = false;
   };
   enhanceHeroProcess();
+  const enhanceMotion = () => {
+    const page = document.documentElement;
+    const controls = [...document.querySelectorAll('button[data-motion-toggle]')];
+    const graphics = [...document.querySelectorAll('.hero-process, .programme-row, .approach-steps li, .workflow-example, .model-range')];
+    let observer;
+    let userPaused = false;
+    const setPageVisibility = () => { page.dataset.pageVisible = String(!document.hidden); };
+    const useStaticGraphics = () => {
+      page.dataset.motion = 'paused';
+      controls.forEach(button => { button.hidden = true; });
+      graphics.forEach(graphic => graphic.classList.remove('motion-ready', 'is-in-view', 'has-entered', 'motion-complete'));
+      if (observer) observer.disconnect();
+    };
+    // Motion is an optional enhancement. A missing API must not affect navigation or forms.
+    useStaticGraphics();
+    setPageVisibility();
+    try {
+      if (typeof window.matchMedia !== 'function' || typeof window.IntersectionObserver !== 'function') return;
+      const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const syncControls = () => {
+        const paused = preference.matches || userPaused;
+        page.dataset.motion = paused ? 'paused' : 'running';
+        if (paused) graphics.forEach(graphic => {
+          if (graphic.classList.contains('has-entered')) graphic.classList.add('motion-complete');
+        });
+        controls.forEach(button => {
+          button.hidden = preference.matches;
+          button.setAttribute('aria-pressed', String(paused));
+          const label = button.querySelector('[data-motion-label]');
+          if (label) label.textContent = paused ? 'Resume motion' : 'Pause motion';
+        });
+      };
+      observer = new window.IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const visible = entry.isIntersecting && entry.intersectionRatio >= 0.1;
+          entry.target.classList.toggle('is-in-view', visible);
+          if (visible) {
+            entry.target.classList.add('has-entered');
+            if (page.dataset.motion === 'paused') entry.target.classList.add('motion-complete');
+          }
+        });
+      }, {threshold: [0, 0.1], rootMargin: '0px 0px -24px 0px'});
+      graphics.forEach(graphic => {
+        observer.observe(graphic);
+        graphic.classList.add('motion-ready');
+      });
+      controls.forEach(button => button.addEventListener('click', () => {
+        userPaused = !userPaused;
+        syncControls();
+      }));
+      if (typeof preference.addEventListener === 'function') preference.addEventListener('change', syncControls);
+      else if (typeof preference.addListener === 'function') preference.addListener(syncControls);
+      document.addEventListener('visibilitychange', setPageVisibility);
+      syncControls();
+    } catch {
+      useStaticGraphics();
+    }
+  };
+  enhanceMotion();
   const trainingRequest = document.getElementById('training-enquiry');
   const callbackRequest = document.getElementById('callback');
   const openRequest = request => {

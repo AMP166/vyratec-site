@@ -136,12 +136,12 @@
     "title": "Accessibility",
     "description": "Accessibility features and assistance for visitors using the Vyratec corporate AI training website.",
     "intro": "We want prospective clients to be able to explore our training and contact us with confidence.",
-    "updated": "2026-10-22",
+    "updated": "2026-10-23",
     "sections": [
       {
         "id": "features",
         "heading": "Using the website",
-        "html": "<p>The website includes keyboard navigation, visible focus indicators, a skip-to-content link, labelled form fields, text alternatives for meaningful images and layouts that adapt to smaller screens. It follows your device’s reduced-motion preference for scrolling and transitions.</p><p>Programme information and policy pages are available as regular HTML. The enquiry form also has a submission path when JavaScript is unavailable.</p>"
+        "html": "<p>The website includes keyboard navigation, visible focus indicators, a skip-to-content link, labelled form fields, text alternatives for meaningful images and layouts that adapt to smaller screens. Decorative animation follows your device’s reduced-motion preference. You can also use Pause motion in the hero or footer to stop it.</p><p>Programme information and policy pages are available as regular HTML. The enquiry form also has a submission path when JavaScript is unavailable.</p>"
       },
       {
         "id": "help",
