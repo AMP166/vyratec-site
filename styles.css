@@ -1670,8 +1670,10 @@ h2 {
 .hero {
   background:linear-gradient(112deg,var(--paper) 62%,#e7eef4 62%);
 }
-.experience-strip {
+.experience-band {
   background:var(--paper);
+}
+.experience-strip {
   border-top:2px solid var(--navy);
 }
 .experience-strip>a {
