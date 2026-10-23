@@ -141,7 +141,7 @@
       {
         "id": "features",
         "heading": "Using the website",
-        "html": "<p>The website includes keyboard navigation, visible focus indicators, a skip-to-content link, labelled form fields, text alternatives for meaningful images and layouts that adapt to smaller screens. Decorative animation follows your device’s reduced-motion preference. You can also use Pause motion in the hero or footer to stop it.</p><p>Programme information and policy pages are available as regular HTML. The enquiry form also has a submission path when JavaScript is unavailable.</p>"
+        "html": "<p>The website includes keyboard navigation, visible focus indicators, a skip-to-content link, labelled form fields, text alternatives for meaningful images and layouts that adapt to smaller screens. Decorative effects start when the relevant content enters view and respect your device’s reduced-motion preference.</p><p>Programme information and policy pages are available as regular HTML. The enquiry form also has a submission path when JavaScript is unavailable.</p>"
       },
       {
         "id": "help",

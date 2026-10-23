@@ -83,63 +83,145 @@
   enhanceHeroProcess();
   const enhanceMotion = () => {
     const page = document.documentElement;
-    const controls = [...document.querySelectorAll('button[data-motion-toggle]')];
     const graphics = [...document.querySelectorAll([
-      '.hero-process', '.programme-row', '.approach-steps li', '.workflow-example', '.model-range',
+      '.hero-process', '.programme-row', '.approach-steps li', '.workflow-example', '.model-endpoint',
       '.capability', '.experience-record', '.section-heading', '.local-ai-priorities article',
       '.contact-copy', '.training-facts', '.training-aside', '.programme-section', '.training-intro',
       '.information-heading', '.information-content section', '.information-contact', '.error-code', '.footer-brand'
     ].join(', '))];
-    let observer;
-    let userPaused = false;
+    const revealCandidates = [...document.querySelectorAll([
+      '.section-heading', '.capability', '.experience-record', '.practice-copy', '.programme-intro',
+      '.programme-row', '.approach-steps li', '.local-ai-copy', '.model-range', '.local-ai-priorities article',
+      '.faq-grid > div:first-child', '.contact-copy', '.form-panel', '.training-intro', '.programme-section',
+      '.training-aside', '.footer-brand'
+    ].join(', '))];
+    // Reveal a block once rather than compounding transforms on nested content.
+    const reveals = revealCandidates.filter(element => !revealCandidates.some(parent => parent !== element && parent.contains(element)));
+    let graphicObserver;
+    let revealObserver;
+    let resizeFrame;
+    let preference;
     const setPageVisibility = () => { page.dataset.pageVisible = String(!document.hidden); };
+    const reveal = element => {
+      element.classList.remove('reveal-pending');
+      element.classList.add('reveal-shown');
+      if (revealObserver) revealObserver.unobserve(element);
+    };
+    const showAll = () => reveals.forEach(reveal);
     const useStaticGraphics = () => {
       page.dataset.motion = 'paused';
-      controls.forEach(button => { button.hidden = true; });
+      if (graphicObserver) graphicObserver.disconnect();
+      if (revealObserver) revealObserver.disconnect();
       graphics.forEach(graphic => graphic.classList.remove('motion-ready', 'is-in-view', 'has-entered', 'motion-complete'));
-      if (observer) observer.disconnect();
+      reveals.forEach(element => element.classList.remove('scroll-reveal', 'reveal-pending', 'reveal-shown'));
     };
-    // Motion is an optional enhancement. A missing API must not affect navigation or forms.
+    const hashTarget = () => {
+      let id;
+      try { id = decodeURIComponent(location.hash.slice(1)); } catch { return null; }
+      const target = id ? document.getElementById(id) : null;
+      // Page-wide anchors must not finish every section's pending entrance.
+      return target && target !== document.body && target !== page && target.tagName !== 'MAIN' ? target : null;
+    };
+    const revealHashTarget = () => {
+      const target = hashTarget();
+      if (target) reveals.forEach(element => {
+        if (element === target || element.contains(target) || target.contains(element)) reveal(element);
+      });
+    };
+    // Observe the diagram itself: a tall text column must not start its graphic offscreen.
+    const graphicTargets = new Map();
+    graphics.forEach(graphic => {
+      const selector = graphic.matches('.hero-process') ? '.process-scene'
+        : graphic.matches('.programme-row') ? '.programme-mark'
+        : graphic.matches('.capability') ? '.capability-mark'
+        : graphic.matches('.experience-record') ? '.experience-circuit'
+        : graphic.matches('.workflow-example') ? '.workflow-line'
+        : graphic.matches('.model-endpoint') ? '.model-hardware'
+        : graphic.matches('.contact-copy') ? '.contact-circuit' : null;
+      const target = (selector && graphic.querySelector(selector)) || graphic;
+      if (!graphicTargets.has(target)) graphicTargets.set(target, []);
+      graphicTargets.get(target).push(graphic);
+    });
+    const observeMotion = () => {
+      if (graphicObserver) graphicObserver.disconnect();
+      if (revealObserver) revealObserver.disconnect();
+      if (preference.matches) return;
+      // Pixel margins stay proportional to viewport height, including portrait phones.
+      const inset = Math.round(window.innerHeight * 0.12);
+      const rootMargin = '0px 0px -' + inset + 'px 0px';
+      graphicObserver = new window.IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const visible = entry.isIntersecting;
+          graphicTargets.get(entry.target).forEach(graphic => {
+            graphic.classList.toggle('is-in-view', visible);
+            if (visible) graphic.classList.add('has-entered');
+          });
+        });
+      }, {threshold: 0, rootMargin});
+      revealObserver = new window.IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) reveal(entry.target);
+        });
+      }, {threshold: 0, rootMargin});
+      graphicTargets.forEach((roots, target) => graphicObserver.observe(target));
+      reveals.forEach(element => {
+        if (element.classList.contains('reveal-pending')) revealObserver.observe(element);
+      });
+    };
+    const syncPreference = () => {
+      page.dataset.motion = preference.matches ? 'paused' : 'running';
+      if (preference.matches) {
+        // A preference change finishes entries and exposes all content immediately.
+        graphics.forEach(graphic => {
+          graphic.classList.add('has-entered', 'motion-complete');
+          graphic.classList.remove('is-in-view');
+        });
+        showAll();
+      }
+      observeMotion();
+    };
+    // Missing APIs or an enhancement error always leave a readable static page.
     useStaticGraphics();
     setPageVisibility();
     try {
       if (typeof window.matchMedia !== 'function' || typeof window.IntersectionObserver !== 'function') return;
-      const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const syncControls = () => {
-        const paused = preference.matches || userPaused;
-        page.dataset.motion = paused ? 'paused' : 'running';
-        if (paused) graphics.forEach(graphic => {
-          if (graphic.classList.contains('has-entered')) graphic.classList.add('motion-complete');
-        });
-        controls.forEach(button => {
-          button.hidden = preference.matches;
-          button.setAttribute('aria-pressed', String(paused));
-          const label = button.querySelector('[data-motion-label]');
-          if (label) label.textContent = paused ? 'Resume motion' : 'Pause motion';
-        });
-      };
-      observer = new window.IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          const visible = entry.isIntersecting && entry.intersectionRatio >= 0.1;
-          entry.target.classList.toggle('is-in-view', visible);
-          if (visible) {
-            entry.target.classList.add('has-entered');
-            if (page.dataset.motion === 'paused') entry.target.classList.add('motion-complete');
-          }
-        });
-      }, {threshold: [0, 0.1], rootMargin: '0px 0px -24px 0px'});
-      graphics.forEach(graphic => {
-        observer.observe(graphic);
-        graphic.classList.add('motion-ready');
+      preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+      graphics.forEach(graphic => graphic.classList.add('motion-ready'));
+      // Arm reveals after the browser applies any initial fragment position.
+      requestAnimationFrame(() => {
+        try {
+          const viewportHeight = window.innerHeight;
+          const initialTarget = hashTarget();
+          // Read layout once before applying styles. Never hide content already in view.
+          const initialRects = reveals.map(element => [element, element.getBoundingClientRect()]);
+          initialRects.forEach(([element, rect]) => {
+            const containsTarget = initialTarget && (element === initialTarget || element.contains(initialTarget) || initialTarget.contains(element));
+            element.classList.add('scroll-reveal');
+            if (!preference.matches && !containsTarget && rect.top >= viewportHeight && rect.height > 0 && rect.width > 0) element.classList.add('reveal-pending');
+            else reveal(element);
+          });
+          syncPreference();
+        } catch {
+          useStaticGraphics();
+        }
       });
-      controls.forEach(button => button.addEventListener('click', () => {
-        userPaused = !userPaused;
-        syncControls();
-      }));
-      if (typeof preference.addEventListener === 'function') preference.addEventListener('change', syncControls);
-      else if (typeof preference.addListener === 'function') preference.addListener(syncControls);
+      const safelySyncPreference = () => {
+        try { syncPreference(); } catch { useStaticGraphics(); }
+      };
+      if (typeof preference.addEventListener === 'function') preference.addEventListener('change', safelySyncPreference);
+      else if (typeof preference.addListener === 'function') preference.addListener(safelySyncPreference);
       document.addEventListener('visibilitychange', setPageVisibility);
-      syncControls();
+      window.addEventListener('hashchange', revealHashTarget);
+      document.addEventListener('focusin', event => {
+        const pending = event.target.closest?.('.reveal-pending');
+        if (pending) reveal(pending);
+      });
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(() => {
+          try { observeMotion(); } catch { useStaticGraphics(); }
+        });
+      });
     } catch {
       useStaticGraphics();
     }
