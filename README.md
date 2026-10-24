@@ -4,7 +4,7 @@ A lightweight, responsive HTML/CSS/JavaScript site with Cloudflare Pages Functio
 
 ## Local development
 
-Use Node.js 22.13 or later (the SMS database tests use Node's built-in SQLite):
+Use stable Node.js **24.22.1 or later in the 24.x line**. The repository's `.node-version` pins 24.22.1, the October 2026 security baseline. The build, local preview and `npm test` reject older or unsupported runtimes and print the actual Node version. The SMS database tests use Node's built-in SQLite.
 
 ```sh
 npm run dev
@@ -16,7 +16,17 @@ Preview: http://127.0.0.1:4173/. The local server runs the actual enquiry handle
 
 Cloudflare's production build command is `npm run build`, with `dist` as the output directory. Keep `functions/` at the repository root; Pages bundles Functions separately. `_routes.json` limits function invocation to `/api/*`. Do not publish the source root as the static output; use `dist`.
 
+Cloudflare Pages supports the root `.node-version` file for build-runtime selection; `package.json` engines alone do not select Node in its v3 build image. If a `NODE_VERSION` dashboard variable is configured, keep it aligned with the repository pin. Verify the actual version in the next deployment's build log. The runtime guard stops a stale build environment from producing a new deployment.
+
 The build gives CSS and JavaScript content-hashed filenames and updates page references automatically. This prevents cached assets from an earlier deployment being reused with new markup. Local development continues to use the source filenames. Unversioned files are retained for the server-generated no-JavaScript response.
+
+## Runtime security scope
+
+The public site serves static files and Cloudflare Pages Functions on the Workers runtime. It does not run PHP, Apache `mod_php`, PHP-FPM or a Node.js HTTP server in production. Node.js is used for the build, automated tests and the localhost-only preview. The application has no PHP files or external runtime packages, and no application code calls `node:zlib`. The patched Node runtime also covers implicit decoding of provider responses during local preview.
+
+The Node.js 24.22.1 minimum includes the October 21, 2026 security fixes, including CVE-2026-111497. The PHP CVE-2026-109618 and CVE-2026-109619 execution paths do not apply to this application's runtime. Cloudflare operates and patches its underlying production infrastructure; the repository pin controls this project's Node tooling and Pages build. Continue reviewing security releases and raise the pin and guard together when updating the supported baseline.
+
+Official references: [Node.js October 2026 security release](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases), [PHP CVE-2026-109618](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w), [PHP CVE-2026-109619](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp), [Cloudflare Pages build-runtime selection](https://developers.cloudflare.com/pages/configuration/build-image/), [Pages Functions on Workers](https://developers.cloudflare.com/pages/functions/).
 
 ## Email setup before production
 
