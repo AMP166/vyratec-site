@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {alertCallbackOwner} from '../functions/_sms.mjs';
 import {onRequestPost} from '../functions/api/enquire.js';
+import {createSecurityEnv, secureRequest, withTurnstile} from './helpers/enquiry-env.mjs';
 
 const caller = {receiptId: 'mail-receipt-1', reference: 'VYR-12345678', name: 'Example Caller', phone: '+61 2 5550 1234', company: 'Example Engineering'};
 const queued = () => Response.json({http_code: 200, response_code: 'SUCCESS', data: {messages: [{status: 'SUCCESS', message_id: 'sms-receipt-1'}]}});
@@ -229,44 +230,45 @@ function enquiryRequest(kind = 'callback') {
   const fields = {name: caller.name, email: 'caller@example.com', company: caller.company, message: 'Discuss training', requestId: '12345678-1234-4234-8234-123456789012'};
   if (kind === 'callback') Object.assign(fields, {kind, phone: caller.phone, preferredTime: 'Tuesday afternoon, Sydney time'});
   else fields.interest = 'Applied AI Training';
-  const form = new FormData();
-  Object.entries(fields).forEach(([key, value]) => form.set(key, value));
-  return new Request('https://vyratec.com/api/enquire', {method: 'POST', headers: {Accept: 'application/json', Origin: 'https://vyratec.com'}, body: form});
+  return secureRequest(fields);
 }
 
-test('accepted callback email schedules its optional owner alert through waitUntil without exposing SMS status', async () => {
-  const original = globalThis.fetch; const db = database(); const tasks = []; const destinations = [];
-  globalThis.fetch = async url => {destinations.push(url); return url.includes('resend.com') ? Response.json({id: caller.receiptId}) : queued();};
+test('accepted callback email schedules its optional owner alert through waitUntil without exposing SMS status', async t => {
+  const original = globalThis.fetch; const tasks = []; const destinations = [];
+  const ready = createSecurityEnv(t); const db = ready.SMS_ALERTS;
+  const settings = {...ready, ...mailEnv, ...configured(db)};
+  globalThis.fetch = withTurnstile(async url => {destinations.push(url); return url.includes('resend.com') ? Response.json({id: caller.receiptId}) : queued();});
   try {
-    const response = await onRequestPost({request: enquiryRequest(), env: {...mailEnv, ...configured(db)}, waitUntil(task) {tasks.push(task);}});
+    const response = await onRequestPost({request: enquiryRequest(), env: settings, waitUntil(task) {tasks.push(task);}});
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), {ok: true, reference: caller.reference, kind: 'callback'});
     assert.equal(tasks.length, 1);
     await Promise.all(tasks);
     assert.deepEqual(destinations, ['https://api.resend.com/emails', 'https://rest.clicksend.com/v3/sms/send']);
-    assert.equal(db.rows.get(caller.receiptId).status, 'queued');
+    assert.equal(db.sqlite.prepare('SELECT status FROM callback_sms_alerts WHERE receipt_id = ?').get(caller.receiptId).status, 'queued');
   } finally {globalThis.fetch = original;}
 });
 
-test('failed email and normal training enquiries never send SMS; SMS failure never reverses accepted callback email', async () => {
-  const original = globalThis.fetch; const db = database(); let smsSends = 0;
-  const settings = {...mailEnv, ...configured(db)};
+test('failed email and normal training enquiries never send SMS; SMS failure never reverses accepted callback email', async t => {
+  const original = globalThis.fetch; let smsSends = 0;
+  const ready = createSecurityEnv(t); const db = ready.SMS_ALERTS;
+  const settings = {...ready, ...mailEnv, ...configured(db)};
   try {
-    globalThis.fetch = async url => {assert.ok(url.includes('resend.com')); return Response.json({error: 'rejected'}, {status: 429});};
+    globalThis.fetch = withTurnstile(async url => {assert.ok(url.includes('resend.com')); return Response.json({error: 'rejected'}, {status: 429});});
     assert.equal((await onRequestPost({request: enquiryRequest(), env: settings})).status, 502);
-    assert.equal(db.calls.length, 0);
-    globalThis.fetch = async url => {assert.ok(url.includes('resend.com')); return Response.json({id: 'training-mail-receipt'});};
+    assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS total FROM callback_sms_alerts').get().total, 0);
+    globalThis.fetch = withTurnstile(async url => {assert.ok(url.includes('resend.com')); return Response.json({id: 'training-mail-receipt'});});
     assert.equal((await onRequestPost({request: enquiryRequest('training'), env: settings})).status, 200);
-    assert.equal(db.calls.length, 0);
-    globalThis.fetch = async url => {
+    assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS total FROM callback_sms_alerts').get().total, 0);
+    globalThis.fetch = withTurnstile(async url => {
       if (url.includes('resend.com')) return Response.json({id: caller.receiptId});
       smsSends++;
       throw new DOMException('Timed out', 'TimeoutError');
-    };
+    });
     const response = await onRequestPost({request: enquiryRequest(), env: settings});
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), {ok: true, reference: caller.reference, kind: 'callback'});
     assert.equal(smsSends, 1);
-    assert.equal(db.rows.get(caller.receiptId).status, 'unknown');
+    assert.equal(db.sqlite.prepare('SELECT status FROM callback_sms_alerts WHERE receipt_id = ?').get(caller.receiptId).status, 'unknown');
   } finally {globalThis.fetch = original;}
 });

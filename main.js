@@ -308,7 +308,112 @@
   if (interest && Object.hasOwn(programmeInterests, selectedProgramme)) {
     interest.value = programmeInterests[selectedProgramme];
   }
-  const enhanceRequestForm = ({formId, messageId, successId, restartId, locationLabel, submitLabel, requestLabel}) => {
+  const protectionError = 'The security check is temporarily unavailable. Please try again or contact us by email.';
+  let protectionConfig;
+  let protectionScript;
+  const loadProtectionConfig = () => {
+    if (!protectionConfig) {
+      protectionConfig = (async () => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+        try {
+          const response = await fetch('/api/form-config', {headers:{Accept:'application/json'}, cache:'no-store', signal:controller.signal});
+          const config = await response.json();
+          if (!response.ok || typeof config.sitekey !== 'string' || !/^[a-z0-9_-]{10,100}$/i.test(config.sitekey)) throw new Error(protectionError);
+          return config;
+        } finally { clearTimeout(timeout); }
+      })().catch(error => { protectionConfig = null; throw error; });
+    }
+    return protectionConfig;
+  };
+  const loadProtectionScript = () => {
+    if (window.turnstile?.render) return Promise.resolve(window.turnstile);
+    if (!protectionScript) {
+      protectionScript = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        const finish = error => {
+          clearTimeout(timeout);
+          script.onload = script.onerror = null;
+          if (error) { script.remove(); reject(new Error(protectionError)); }
+          else resolve(window.turnstile);
+        };
+        const timeout = setTimeout(() => finish(true), 12000);
+        script.onload = () => window.turnstile?.render ? finish(false) : finish(true);
+        script.onerror = () => finish(true);
+        document.head.append(script);
+      }).catch(error => { protectionScript = null; throw error; });
+    }
+    return protectionScript;
+  };
+  const createFormProtection = (form, action) => {
+    const container = form.querySelector('.form-verification');
+    let widgetId;
+    let preparing;
+    let pending;
+    const finish = (error, token) => {
+      if (!pending) return;
+      const current = pending;
+      pending = null;
+      clearTimeout(current.timeout);
+      if (error) current.reject(new Error(error));
+      else current.resolve(token);
+    };
+    const prepare = () => {
+      if (widgetId !== undefined) return Promise.resolve();
+      if (!preparing) {
+        preparing = (async () => {
+          const config = await loadProtectionConfig();
+          const turnstile = await loadProtectionScript();
+          widgetId = turnstile.render(container, {
+            sitekey:config.sitekey, action, theme:'light', size:'compact',
+            execution:'execute', appearance:'interaction-only', retry:'never', 'response-field':false,
+            callback:token => finish(null, token),
+            'error-callback':() => finish(protectionError),
+            'unsupported-callback':() => finish('Your browser could not complete the security check. Please contact us by email.'),
+            'expired-callback':() => finish('The security check expired. Please try sending again.'),
+            'timeout-callback':() => finish('The security check timed out. Please try sending again.')
+          });
+          if (widgetId === undefined || widgetId === null) throw new Error(protectionError);
+        })().catch(error => { preparing = null; widgetId = undefined; throw error; });
+      }
+      return preparing;
+    };
+    return {
+      prepare,
+      async verify() {
+        try { await prepare(); } catch { throw new Error(protectionError); }
+        // Tokens are single-use. A failed attempt always gets a fresh challenge.
+        window.turnstile.reset(widgetId);
+        return new Promise((resolve, reject) => {
+          pending = {resolve, reject, timeout:setTimeout(() => finish('The security check timed out. Please try sending again.'), 120000)};
+          try { window.turnstile.execute(`#${container.id}`); }
+          catch { finish(protectionError); }
+        });
+      },
+      reset() {
+        finish('Please try sending again.');
+        if (widgetId !== undefined) {
+          try { window.turnstile.reset(widgetId); } catch { widgetId = undefined; preparing = null; }
+        }
+      }
+    };
+  };
+  const retryDeadline = (response, payload) => {
+    const value = payload?.retryAfter ?? response.headers.get('Retry-After');
+    const seconds = Number(value);
+    if (Number.isFinite(seconds) && seconds > 0) return Date.now() + Math.min(seconds, 86400) * 1000;
+    const date = Date.parse(value);
+    return Number.isFinite(date) && date > Date.now() ? Math.min(date, Date.now() + 86400000) : 0;
+  };
+  const retryTimeMessage = deadline => {
+    const seconds = Math.max(1, Math.ceil((deadline - Date.now()) / 1000));
+    return seconds < 60
+      ? `Please try again in ${seconds} seconds.`
+      : `Please try again after ${new Date(deadline).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})}.`;
+  };
+  const enhanceRequestForm = ({formId, messageId, successId, restartId, locationLabel, submitLabel, requestLabel, action}) => {
     const form = document.getElementById(formId);
     const message = document.getElementById(messageId);
     const success = document.getElementById(successId);
@@ -317,34 +422,76 @@
     // Retain the SVG icon when the submit label changes; glyph arrows become emoji on iOS.
     const button = form.querySelector('[type="submit"]');
     const submitArrow = button.querySelector('.arrow-icon').cloneNode(true);
+    const protection = createFormProtection(form, action);
     let started = false;
     let sending = false;
     let requestId = crypto.randomUUID();
+    let previousAttempt;
+    let cooldown;
+    const showError = text => {
+      message.className = 'form-message error';
+      message.textContent = text;
+      const email = document.createElement('a');
+      email.href = 'mailto:shop@vyratec.com';
+      email.textContent = 'Contact us';
+      message.append(document.createElement('br'), email);
+      message.focus();
+    };
     const markStarted = () => {
       if (!started) { started = true; track('enquiry_start', locationLabel); }
     };
     form.addEventListener('input', markStarted);
+    // Load only when a visitor reaches a form; verification runs on submission.
+    form.addEventListener('focusin', () => protection.prepare().catch(() => {}), {once:true});
     form.addEventListener('submit', async event => {
       event.preventDefault();
       if (sending || !form.reportValidity()) return;
       markStarted();
-      sending = true;
-      button.disabled = true;
-      button.textContent = 'Sending…';
-      form.setAttribute('aria-busy', 'true');
-      message.className = 'form-message';
-      message.textContent = '';
       const data = new FormData(form);
       data.set('requestId', requestId);
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 20000);
+      const signature = JSON.stringify([...data].filter(([name]) => name !== 'cf-turnstile-response'));
+      if (cooldown?.signature === signature && cooldown.until > Date.now()) {
+        showError(`Your details have been kept. ${retryTimeMessage(cooldown.until)}`);
+        return;
+      }
+      sending = true;
+      button.disabled = true;
+      button.textContent = 'Checking…';
+      form.setAttribute('aria-busy', 'true');
+      message.className = 'form-message';
+      message.textContent = 'Completing the security check. If a check appears above, follow its instructions.';
+      const send = async token => {
+        const current = new FormData(form);
+        current.set('requestId', requestId);
+        if (JSON.stringify([...current].filter(([name]) => name !== 'cf-turnstile-response')) !== signature) {
+          throw new Error('Your details changed during the security check. Please review them and send again.');
+        }
+        data.set('cf-turnstile-response', token);
+        previousAttempt = {signature, token};
+        button.textContent = 'Sending…';
+        message.textContent = '';
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 20000);
+        try {
+          const response = await fetch('/api/enquire', {method:'POST', body:data, headers:{Accept:'application/json'}, signal:controller.signal});
+          return {response, payload:await response.json().catch(() => null)};
+        } finally { clearTimeout(timeout); }
+      };
       try {
-        const response = await fetch('/api/enquire', {
-          method: 'POST', body: data, headers: {Accept: 'application/json'}, signal: controller.signal
-        });
-        const payload = await response.json().catch(() => null);
+        // The same submission can recover an accepted receipt after a timeout,
+        // even if its original single-use token has already been consumed.
+        const recovering = previousAttempt?.signature === signature;
+        const token = recovering ? previousAttempt.token : await protection.verify();
+        let {response, payload} = await send(token);
+        if (recovering && !response.ok && payload?.code === 'verification_required') {
+          button.textContent = 'Checking…';
+          message.textContent = 'Refreshing the security check. If a check appears above, follow its instructions.';
+          ({response, payload} = await send(await protection.verify()));
+        }
         if (!response.ok || !payload?.ok || !payload.reference) {
-          throw new Error(payload?.error || `We couldn’t send your ${requestLabel}. Please try again or contact us by email.`);
+          const deadline = [409, 429].includes(response.status) ? retryDeadline(response, payload) : 0;
+          if (deadline) cooldown = {signature, until:deadline};
+          throw new Error(`${payload?.error || `We couldn’t send your ${requestLabel}. Please try again or contact us by email.`}${deadline ? ` ${retryTimeMessage(deadline)}` : ''}`);
         }
         // Conversions are recorded by the server only after Resend accepts the email.
         form.reset();
@@ -353,18 +500,15 @@
         success.querySelector('.success-reference').textContent = `Request reference: ${payload.reference}`;
         success.focus();
         requestId = crypto.randomUUID();
+        previousAttempt = null;
+        cooldown = null;
       } catch (error) {
-        message.classList.add('error');
-        message.textContent = error.name === 'AbortError'
+        showError(error.name === 'AbortError'
           ? 'Sending took longer than expected. Please retry; your request reference prevents a duplicate email.'
-          : error.message;
-        const email = document.createElement('a');
-        email.href = 'mailto:shop@vyratec.com';
-        email.textContent = 'Contact us';
-        message.append(document.createElement('br'), email);
-        message.focus();
+          : (error instanceof TypeError ? 'We couldn’t connect. Your details have been kept; please try again or contact us by email.'
+            : (error.message || `We couldn’t send your ${requestLabel}. Please try again or contact us by email.`)));
       } finally {
-        clearTimeout(timeout);
+        protection.reset();
         sending = false;
         form.removeAttribute('aria-busy');
         button.disabled = false;
@@ -374,9 +518,13 @@
     });
     restart.addEventListener('click', () => {
       success.hidden = true; form.hidden = false; started = false;
+      previousAttempt = null; cooldown = null;
       message.textContent = ''; form.querySelector('[autocomplete="name"]').focus();
     });
+    // The base HTML explains the email alternative if JavaScript cannot run.
+    form.querySelector('[data-form-static-fallback]').hidden = true;
+    button.disabled = false;
   };
-  enhanceRequestForm({formId:'enquiry-form', messageId:'form-message', successId:'form-success', restartId:'new-enquiry', locationLabel:'contact-form', submitLabel:'Send training enquiry', requestLabel:'enquiry'});
-  enhanceRequestForm({formId:'callback-form', messageId:'callback-message', successId:'callback-success', restartId:'new-callback', locationLabel:'callback-form', submitLabel:'Request a callback', requestLabel:'callback request'});
+  enhanceRequestForm({formId:'enquiry-form', messageId:'form-message', successId:'form-success', restartId:'new-enquiry', locationLabel:'contact-form', submitLabel:'Send training enquiry', requestLabel:'enquiry', action:'training'});
+  enhanceRequestForm({formId:'callback-form', messageId:'callback-message', successId:'callback-success', restartId:'new-callback', locationLabel:'callback-form', submitLabel:'Request a callback', requestLabel:'callback request', action:'callback'});
 })();

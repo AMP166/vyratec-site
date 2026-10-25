@@ -18,7 +18,7 @@ Cloudflare's production build command is `npm run build`, with `dist` as the out
 
 Cloudflare Pages supports the root `.node-version` file for build-runtime selection; `package.json` engines alone do not select Node in its v3 build image. If a `NODE_VERSION` dashboard variable is configured, keep it aligned with the repository pin. Verify the actual version in the next deployment's build log. The runtime guard stops a stale build environment from producing a new deployment.
 
-The build gives CSS and JavaScript content-hashed filenames and updates page references automatically. This prevents cached assets from an earlier deployment being reused with new markup. Local development continues to use the source filenames. Unversioned files are retained for the server-generated no-JavaScript response.
+The build gives CSS and JavaScript content-hashed filenames and updates page references automatically. This prevents cached assets from an earlier deployment being reused with new markup. Local development continues to use the source filenames. Unversioned files are retained for the server-generated HTML response.
 
 ## Runtime security scope
 
@@ -43,7 +43,28 @@ In Resend, verify a sender domain you control (for example, a sending subdomain 
 
 Redeploy after changing configuration. Submit a real test enquiry and verify the business inbox and BCC receive it, reply-to is correct and the website displays confirmation. Resend acceptance confirms the provider accepted the email, not that an inbox has received it; inspect delivery status during the launch test.
 
-If email configuration is unavailable, `/api/enquire` returns 503. On a JavaScript form submission, the website retains the visitor’s entries and provides a Contact us email link. Provider errors return 502. Both are failures and never record successful enquiries. A no-JavaScript submission gets a standalone HTML confirmation or error from the same handler.
+If email configuration is unavailable, `/api/enquire` returns 503. On a JavaScript form submission, the website retains the visitor’s entries and provides a Contact us email link. Provider errors return 502. Both are failures and never record successful enquiries. The server supports HTML responses, but public form submissions require the JavaScript Turnstile check. The visible no-JavaScript notice links directly to email.
+
+## Enquiry abuse protection
+
+Both forms share a rolling limit of **10 POST attempts per connection IP in 10 minutes**, followed by **3 new bot-verified enquiries per normalised email in one hour**. Backend checks precede notification delivery. HTTP 429 responses carry `Retry-After`; the browser retains fields and displays a retry time. Accepted retries return their stored confirmation without another email, SMS or conversion. They still count toward the connection attempt limit.
+
+Apply `migrations/enquiry-protection.sql` to the existing production D1 database bound as `SMS_ALERTS`. The migration adds enquiry-specific tables and indexes and preserves callback SMS records. Configure these Pages production settings before deploying:
+
+| Name | Purpose | Storage |
+| --- | --- | --- |
+| `TURNSTILE_SITE_KEY` | Public sitekey for the Vyratec managed widget | Text |
+| `TURNSTILE_SECRET_KEY` | Siteverify credential for that widget | Secret |
+| `TURNSTILE_HOSTNAMES` | `vyratec.com,www.vyratec.com,vyratec-site.pages.dev` | Text |
+| `ENQUIRY_HASH_KEY` | Independently generated random secret, at least 32 characters | Secret |
+
+Restrict the widget to those Vyratec hostnames and leave pre-clearance off. Server verification checks success, the exact request hostname and the form action (`training` or `callback`). `GET /api/form-config` exposes only the public sitekey. Missing configuration, unavailable D1 or unavailable verification fails closed with a direct-email alternative. The handler trusts only Cloudflare's `CF-Connecting-IP`, never a visitor-supplied forwarding chain. Local preview without a D1 binding shows the unavailable path; automated fixtures use isolated SQLite and mocked providers.
+
+D1 stores keyed HMAC identifiers, processing states and provider receipts, with no readable form fields or raw IP addresses. Connection attempts expire after 10 minutes. Submission metadata expires after 7 days and is removed on subsequent processing; email limits query the preceding rolling hour. Unknown provider outcomes may retry the identical provider key for at most 23 hours. After that the visitor is directed to contact us, avoiding a new delivery outside the provider's idempotency window. Provider acceptance and a receipt-state transition precede analytics and optional SMS; a Worker interruption between those steps can leave a missing event or alert. Inbox records remain authoritative.
+
+The independent callback SMS cap remains 10 attempts per UTC day. Keep preview environments fail closed or configure isolated bindings. Never deploy dummy Turnstile keys or provider-test bypasses to production.
+
+References: [Turnstile server validation](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/), [widget rendering](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/), [Cloudflare D1](https://developers.cloudflare.com/d1/worker-api/d1-database/).
 
 ## Analytics
 
@@ -69,7 +90,7 @@ For enquiry reporting, group successful rows by `blob3` to inspect unique provid
 
 ## Callback requests and optional owner SMS
 
-The contact section offers a training enquiry or a 15-minute callback request. Callback requests collect the caller's name, work email, organisation, phone number, preferred time (Sydney time) and an optional topic. A request is not a confirmed appointment; the business agrees a time separately. Both forms work without JavaScript and deliver through the same Resend configuration, including the private copy. JavaScript retries retain an idempotency token; a fresh native form submission without JavaScript is a new request. Analytics distinguishes accepted callbacks using `callback-form`.
+The contact section offers a training enquiry or a 15-minute callback request. Callback requests collect the caller's name, work email, organisation, phone number, preferred time (Sydney time) and an optional topic. A request is not a confirmed appointment; the business agrees a time separately. Both forms use JavaScript and server-verified Turnstile, then deliver through the same Resend configuration, including the private copy. Retries retain the request identifier and unchanged accepted requests recover their existing confirmation. Direct email is the alternative when JavaScript or verification is unavailable. Analytics distinguishes accepted callbacks using `callback-form`.
 
 Owner SMS alerts are **disabled by default**. Email remains authoritative. To enable them:
 

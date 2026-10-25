@@ -4,7 +4,7 @@
     "title": "Privacy policy",
     "description": "How Vyratec collects, uses and protects information when you visit the website or enquire about corporate AI training.",
     "intro": "How we handle your information, and how to contact us about it.",
-    "updated": "2026-10-22",
+    "updated": "2026-10-26",
     "sections": [
       {
         "id": "about",
@@ -25,6 +25,11 @@
         "id": "activity",
         "heading": "Website activity and technical information",
         "html": "<p>Our custom measurement system counts page visits, enquiry-button clicks, form starts and successful enquiries. It records approved event and location labels. A successful enquiry also records an email-provider receipt to help identify duplicate delivery attempts. Custom measurement records exclude your form contents, IP address, visitor identifiers and URL query parameters.</p><p>Our custom event collection respects browser Do Not Track and Global Privacy Control signals. Cloudflare Web Analytics separately measures aggregate visits and website performance without analytics cookies or local storage. Cloudflare also processes technical request information, such as IP addresses and request headers, for hosting, security and operations. These infrastructure processes are separate from our custom event records.</p><p>Fonts and brand images are served from this website. For more detail about cookies and browser controls, read our <a href=\"/cookies\">cookie notice</a>.</p>"
+      },
+      {
+        "id": "form-security",
+        "heading": "Enquiry security checks",
+        "html": "<p>Our forms use Cloudflare Turnstile to check for automated submissions. Cloudflare processes browser and network signals for that security check. We also use short-lived, keyed hashes of connection and email details to limit repeated requests. These security records are separate from conversion measurement and are not used for advertising.</p><p>Form protection stores keyed hashes, timestamps, processing states and email-provider receipt identifiers in Cloudflare D1. It does not store readable form fields or raw IP addresses. Connection attempt records expire after ten minutes; submission metadata is retained for up to seven days to support rate limits and safe retries. Expired records are removed during subsequent enquiry processing. Our forms require JavaScript; you can also contact us directly by email.</p>"
       },
       {
         "id": "retention",
@@ -102,7 +107,7 @@
     "title": "Cookie notice",
     "description": "Cookies, cookieless website analytics and browser privacy controls on the Vyratec corporate training website.",
     "intro": "What this website uses in your browser, and the controls available to you.",
-    "updated": "2026-10-22",
+    "updated": "2026-10-26",
     "sections": [
       {
         "id": "overview",
@@ -117,7 +122,7 @@
       {
         "id": "security",
         "heading": "Hosting and security cookies",
-        "html": "<p>Cloudflare may use essential security cookies if it needs to check that a request is genuine or protect the website. The cookies used depend on the security features applied to a request. These are separate from advertising or visitor profiling.</p><p>Cloudflare explains its security cookies and their lifetimes in its <a href=\"https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/\">cookie reference</a>.</p>"
+        "html": "<p>The enquiry and callback forms use Cloudflare Turnstile to check that submissions are genuine. It processes browser and network signals and requires JavaScript. If a security check is unavailable or inaccessible, you can <a href=\"mailto:shop@vyratec.com\">contact us by email</a>.</p><p>Cloudflare may use essential security cookies for website protection. The cookies used depend on the features applied to a request; they are separate from advertising or visitor profiling. Cloudflare explains them in its <a href=\"https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/\">cookie reference</a> and describes its processing in its <a href=\"https://www.cloudflare.com/privacypolicy/\">privacy policy</a>.</p>"
       },
       {
         "id": "controls",
@@ -136,12 +141,12 @@
     "title": "Accessibility",
     "description": "Accessibility features and assistance for visitors using the Vyratec corporate AI training website.",
     "intro": "We want prospective clients to be able to explore our training and contact us with confidence.",
-    "updated": "2026-10-23",
+    "updated": "2026-10-26",
     "sections": [
       {
         "id": "features",
         "heading": "Using the website",
-        "html": "<p>The website includes keyboard navigation, visible focus indicators, a skip-to-content link, labelled form fields, text alternatives for meaningful images and layouts that adapt to smaller screens. Decorative effects start when the relevant content enters view and respect your device’s reduced-motion preference.</p><p>Programme information and policy pages are available as regular HTML. The enquiry form also has a submission path when JavaScript is unavailable.</p>"
+        "html": "<p>The website includes keyboard navigation, visible focus indicators, a skip-to-content link, labelled form fields, text alternatives for meaningful images and layouts that adapt to smaller screens. Decorative effects start when the relevant content enters view and respect your device’s reduced-motion preference.</p><p>Programme information and policy pages are available as regular HTML. The enquiry forms require JavaScript for their security check. If JavaScript or the security check is unavailable, you can contact us directly by email using the links beside the forms.</p>"
       },
       {
         "id": "help",

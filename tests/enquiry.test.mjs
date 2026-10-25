@@ -1,12 +1,17 @@
-import {test} from 'node:test';
+import {test, beforeEach} from 'node:test';
 import assert from 'node:assert/strict';
-import {onRequestPost, onRequestGet} from '../functions/api/enquire.js';
+import {onRequestPost as handleRequest, onRequestGet} from '../functions/api/enquire.js';
+import {createSecurityEnv, secureRequest, withTurnstile} from './helpers/enquiry-env.mjs';
+async function onRequestPost(context) {
+  const original = globalThis.fetch; globalThis.fetch = withTurnstile(original);
+  try {return await handleRequest(context);} finally {globalThis.fetch = original;}
+}
 import {onRequestPost as track} from '../functions/api/events.js';
 const valid = {name: 'Test User', email: 'test@example.com', company: 'Example Engineering', interest: 'Applied AI Training', message: 'Training for an operations team of 20.', requestId: '3f7c44cb-9cb1-4200-a5d5-56e85df12b12'};
-const env = {RESEND_API_KEY: 'test-only-key', CONTACT_FROM: 'Vyratec <training@vyratec.com>', CONTACT_BCC: 'owner@example.com'};
+let env; let requestNumber = 0;
+beforeEach(t => {env = createSecurityEnv(t); requestNumber = 0;});
 function request(fields = valid, headers = {}) {
-  const form = new FormData(); Object.entries(fields).forEach(([key, value]) => form.set(key, value));
-  return new Request('https://vyratec.com/api/enquire', {method: 'POST', headers: {Accept: 'application/json', Origin: 'https://vyratec.com', ...headers}, body: form});
+  return secureRequest(fields, {'CF-Connecting-IP': `192.0.2.${++requestNumber}`, ...headers});
 }
 test('accepted email routes to business inbox, BCCs operator, sets reply-to and records success', async () => {
   const original = globalThis.fetch; const points = []; let payload, key;
@@ -70,13 +75,13 @@ test('invalid fields, missing requirements, unknown interests and honeypot are r
 });
 test('rejects cross-origin submissions, oversized streams and unsupported content', async () => {
   assert.equal((await onRequestPost({request: request(valid, {Origin: 'https://other.example'}), env})).status, 403);
-  const large = new Request('https://vyratec.com/api/enquire', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json'}, body: 'a'.repeat(20001)});
+  const large = new Request('https://vyratec.com/api/enquire', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', 'CF-Connecting-IP': '192.0.2.1'}, body: 'a'.repeat(20001)});
   assert.equal((await onRequestPost({request: large, env})).status, 413);
-  const wrong = new Request('https://vyratec.com/api/enquire', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'});
+  const wrong = new Request('https://vyratec.com/api/enquire', {method: 'POST', headers: {'Content-Type': 'application/json', 'CF-Connecting-IP': '192.0.2.2'}, body: '{}'});
   assert.equal((await onRequestPost({request: wrong, env})).status, 415);
   assert.equal(onRequestGet().status, 405);
 });
-test('no-JavaScript submission returns an accessible confirmation after acceptance', async () => {
+test('verified native-form response returns an accessible confirmation after acceptance', async () => {
   const original = globalThis.fetch;
   globalThis.fetch = async () => Response.json({id: 'test-delivery'});
   try {
@@ -144,21 +149,23 @@ test('callback requests deliver contact details privately and record only the fi
   } finally {globalThis.fetch = original;}
 });
 
-test('callback retries share an idempotency key while changed phone, timing or topic produces a different key', async () => {
+test('callback retries recover their existing confirmation and changed fields create separately limited submissions', async t => {
   const original = globalThis.fetch; const keys = []; let payload;
   globalThis.fetch = async (url, options) => {keys.push(options.headers['Idempotency-Key']); payload = JSON.parse(options.body); return Response.json({id: 'callback-receipt'});};
   try {
-    for (const fields of [callback, callback, {...callback, phone: '02 5550 6789'}, {...callback, preferredTime: 'Friday morning, Sydney time'}, {...callback, message: 'A different topic'}]) {
+    for (const fields of [callback, callback, {...callback, phone: '02 5550 6789'}, {...callback, preferredTime: 'Friday morning, Sydney time'}]) {
       assert.equal((await onRequestPost({request: request(fields), env})).status, 200);
     }
-    assert.equal(keys[0], keys[1]);
-    assert.equal(new Set([keys[0], ...keys.slice(2)]).size, 4);
+    assert.equal(keys.length, 3); // The unchanged retry never called Resend again.
+    assert.equal(new Set(keys).size, 3);
+    assert.equal((await onRequestPost({request: request({...callback, message: 'A different topic'}), env})).status, 429);
+    env = createSecurityEnv(t);
     const noTopic = {...callback}; delete noTopic.message;
     assert.equal((await onRequestPost({request: request(noTopic), env})).status, 200);
     assert.match(payload.text, /Topic:\nNot provided/);
-    const emptyTopicResponse = await onRequestPost({request: request({...callback, message: ''}), env});
-    assert.equal(emptyTopicResponse.status, 200);
-    assert.equal(keys.at(-1), keys.at(-2));
+    const sends = keys.length;
+    assert.equal((await onRequestPost({request: request({...callback, message: ''}), env})).status, 200);
+    assert.equal(keys.length, sends);
     assert.equal((await onRequestPost({request: request(valid), env})).status, 200);
     const legacyKey = keys.at(-1);
     for (const kind of ['', 'training']) {
@@ -204,7 +211,7 @@ test('a rejected callback notification never reports success or records a conver
   } finally {globalThis.fetch = original;}
 });
 
-test('no-JavaScript callback confirmation describes a request and agreed timing rather than a booked appointment', async () => {
+test('verified native-form callback confirmation describes a request and agreed timing rather than a booked appointment', async () => {
   const original = globalThis.fetch;
   globalThis.fetch = async () => Response.json({id: 'callback-receipt'});
   try {
@@ -218,7 +225,7 @@ test('no-JavaScript callback confirmation describes a request and agreed timing 
     assert.match(html, /href="\/#callback"/);
     assert.doesNotMatch(html, /has been booked|SMS|text message/i);
     assert.ok(!html.includes(userHtml));
-    const failure = await onRequestPost({request: request(callback, {Accept: 'text/html'}), env: {}});
+    const failure = await onRequestPost({request: request(callback, {Accept: 'text/html'}), env: {...env, RESEND_API_KEY: ''}});
     assert.equal(failure.status, 503);
     const failureHtml = await failure.text();
     assert.match(failureHtml, /Your callback request could not be sent/);

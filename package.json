@@ -10,6 +10,6 @@
     "build": "node build-site.cjs",
     "pages:build": "node build-site.cjs",
     "dev": "node dev-server.mjs",
-    "test": "node check-node.cjs && node --test tests/enquiry.test.mjs tests/site-routing.test.mjs tests/sms.test.mjs"
+    "test": "node check-node.cjs && node --test tests/enquiry.test.mjs tests/enquiry-protection.test.mjs tests/form-config.test.mjs tests/site-routing.test.mjs tests/sms.test.mjs"
   }
 }

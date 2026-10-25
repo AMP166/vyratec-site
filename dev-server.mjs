@@ -4,6 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import * as enquiry from './functions/api/enquire.js';
 import * as events from './functions/api/events.js';
+import * as formConfig from './functions/api/form-config.js';
 import './build-site.cjs';
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), 'dist');
 const redirects = (await readFile(path.join(root, '_redirects'), 'utf8')).split('\n').filter(line => line.trim() && !line.startsWith('#')).map(line => line.trim().split(/\s+/));
@@ -15,7 +16,7 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://127.0.0.1:4173');
     const redirect = redirects.find(([source]) => source === url.pathname);
     if (redirect) { res.writeHead(Number(redirect[2] || 302), {Location: redirect[1] + url.search}); res.end(); return; }
-    const api = {'/api/enquire': enquiry, '/api/events': events}[url.pathname];
+    const api = {'/api/enquire': enquiry, '/api/events': events, '/api/form-config': formConfig}[url.pathname];
     if (api) {
       const chunks = []; let size = 0;
       for await (const chunk of req) { size += chunk.length; if (size > 25000) { res.writeHead(413); res.end(); return; } chunks.push(chunk); }

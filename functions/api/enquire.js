@@ -1,10 +1,15 @@
 import {json, isSameOrigin, readBody, recordEvent, interests} from '../_lib.mjs';
 import {alertCallbackOwner} from '../_sms.mjs';
+import {ProtectionError, countIpAttempt, identifySubmission, findReceipt, verifyVisitor, admitSubmission, claimDelivery, finishDelivery} from '../_abuse.mjs';
 
 const mailError = 'We couldn’t send your enquiry. Please try again or contact us directly.';
 const escapeHtml = value => value.replace(/[&<>"']/g, char => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]));
 function reply(request, payload, status = 200) {
-  if (request.headers.get('accept')?.includes('application/json')) return json(payload, status);
+  if (request.headers.get('accept')?.includes('application/json')) {
+    const response = json(payload, status);
+    if (payload.retryAfter) response.headers.set('Retry-After', String(payload.retryAfter));
+    return response;
+  }
   const callback = payload.kind === 'callback';
   const label = callback ? 'Callback request' : 'Training enquiry';
   const formPath = callback ? '/#callback' : '/#contact';
@@ -41,13 +46,17 @@ function reply(request, payload, status = 200) {
     <nav aria-label="Contact and navigation"><a href="/">Home</a><a href="/#contact">Training enquiries</a><a href="mailto:shop@vyratec.com">Contact us</a></nav>
     <nav aria-label="Website information"><a href="/privacy">Privacy policy</a><a href="/terms">Terms of use</a><a href="/cookies">Cookie notice</a><a href="/accessibility">Accessibility</a></nav>
   </div><div class="wrap footer-bottom"><p>© ${new Date().getUTCFullYear()} Vyratec</p><a href="#top">Back to top</a></div></footer>
-</body></html>`, {status, headers: {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}});
+</body></html>`, {status, headers: {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...(payload.retryAfter ? {'Retry-After': String(payload.retryAfter)} : {})}});
 }
 
 export async function onRequestPost(context) {
   const {request, env} = context;
   let kind = 'training';
-  const fail = (error, status) => reply(request, {ok: false, error, ...(kind === 'callback' ? {kind} : {})}, status);
+  const fail = (error, status, extra = {}) => reply(request, {ok: false, error, ...(kind === 'callback' ? {kind} : {}), ...extra}, status);
+  const success = reference => reply(request, {ok: true, reference, ...(kind === 'callback' ? {kind} : {})});
+  try {
+  // All attempts share a rolling allowance, including malformed form bodies.
+  const protection = await countIpAttempt(env, request);
   if (!isSameOrigin(request)) return fail('Please submit your enquiry from the Vyratec website.', 403);
   const type = request.headers.get('content-type') || '';
   if (!type.startsWith('multipart/form-data') && !type.startsWith('application/x-www-form-urlencoded')) return fail('Unsupported form format.', 415);
@@ -80,12 +89,21 @@ export async function onRequestPost(context) {
   } else if (!interests.includes(fields.interest)) return fail('Please check your email address and selected programme.', 400);
   if (!env.RESEND_API_KEY || !env.CONTACT_FROM || !env.CONTACT_BCC) return fail(mailError, 503);
   const rawId = form.get('requestId');
-  const requestId = typeof rawId === 'string' && /^[a-f0-9-]{36}$/i.test(rawId) ? rawId : crypto.randomUUID();
+  const requestId = typeof rawId === 'string' && /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(rawId) ? rawId.toLowerCase() : crypto.randomUUID();
   // Stable per submission and content: retries do not send duplicate notifications;
   // editing a rejected submission creates a different provider idempotency key.
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(fields)));
-  const hash = [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+  const identity = await identifySubmission(protection, requestId, fields);
+  const hash = identity.contentHash;
   const reference = `VYR-${requestId.slice(0, 8).toUpperCase()}`;
+  let receipt = await findReceipt(protection, identity.key);
+  if (receipt?.status === 'accepted') return success(reference);
+  if (!receipt) {
+    await verifyVisitor(protection, request, form.get('cf-turnstile-response'), kind, requestId);
+    receipt = await admitSubmission(protection, identity);
+  }
+  if (receipt.status === 'accepted') return success(reference);
+  const claim = await claimDelivery(protection, identity.key);
+  if (claim.accepted) return success(reference);
   const text = callback
     ? [`15-minute callback request: ${reference}`, 'Please contact the requester to agree a time. No appointment has been confirmed.', '', `Name: ${fields.name}`, `Work email: ${fields.email}`, `Organisation: ${fields.company}`, `Callback phone: ${fields.phone}`, `Preferred callback time: ${fields.preferredTime}`, '', 'Topic:', fields.message || 'Not provided'].join('\n')
     : [`Corporate training enquiry: ${reference}`, '', `Name: ${fields.name}`, `Work email: ${fields.email}`, `Organisation: ${fields.company}`, `Training interest: ${fields.interest}`, '', 'Requirements:', fields.message].join('\n');
@@ -100,12 +118,22 @@ export async function onRequestPost(context) {
       })
     });
     if (!response.ok) {
+      await finishDelivery(protection, identity.key, claim.owner, 'rejected');
       console.error('Enquiry mail provider rejected delivery', response.status);
       return fail(mailError, 502);
     }
     const result = await response.json();
-    if (!result.id) return fail(mailError, 502);
-    // Stable provider receipt supports deduplicating accepted retries in analytics.
+    if (typeof result.id !== 'string' || !result.id.trim() || result.id.length > 200) {
+      await finishDelivery(protection, identity.key, claim.owner, 'unknown');
+      return fail(mailError, 502);
+    }
+    // Only the current lease owner can finish and trigger notification side effects.
+    const completed = await finishDelivery(protection, identity.key, claim.owner, 'accepted', result.id);
+    if (!completed) {
+      const latest = await findReceipt(protection, identity.key);
+      if (latest?.status === 'accepted') return success(reference);
+      throw new ProtectionError('Your request is still being processed. Please wait a few seconds before retrying with the same details.', 409, 'submission_pending', 3);
+    }
     recordEvent(env, 'enquiry_success', callback ? 'callback-form' : 'contact-form', request, result.id);
     if (callback) {
       // Owner alerts are optional and must never alter an accepted email result.
@@ -115,7 +143,17 @@ export async function onRequestPost(context) {
         else await alert;
       } catch { console.warn('Callback SMS alert unavailable; use the email notification'); }
     }
-    return reply(request, {ok: true, reference, ...(callback ? {kind} : {})});
-  } catch { console.error('Enquiry mail delivery unavailable'); return fail(mailError, 502); }
+    return success(reference);
+  } catch (error) {
+    if (error instanceof ProtectionError) throw error;
+    try { await finishDelivery(protection, identity.key, claim.owner, 'unknown'); }
+    catch { throw new ProtectionError('Your request status is temporarily unavailable. Please retry with the same details or contact us directly.'); }
+    console.error('Enquiry mail delivery unavailable'); return fail(mailError, 502);
+  }
+  } catch (error) {
+    if (error instanceof ProtectionError) return fail(error.message, error.status, {code: error.code, ...(error.retryAfter ? {retryAfter: error.retryAfter} : {})});
+    console.warn('Enquiry protection unavailable');
+    return fail('The enquiry security check is temporarily unavailable. Please try again shortly or contact us directly.', 503, {code: 'security_unavailable'});
+  }
 }
 export function onRequestGet() { return new Response('Method not allowed', {status: 405, headers: {Allow: 'POST'}}); }

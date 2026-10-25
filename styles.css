@@ -813,6 +813,17 @@ h2 {
   width:100%;
   font-size:13px
 }
+.form-verification {
+  max-width:100%;
+  min-width:0;
+  margin:0 0 12px
+}
+.form-verification:empty {
+  display:none
+}
+.form-verification iframe {
+  max-width:100%
+}
 .form-disclaimer {
   font-size:13px;
   color:#607285;
