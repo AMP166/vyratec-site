@@ -24,6 +24,6 @@ ${slug ? `<link rel="canonical" href="https://vyratec.com/${slug}"><meta propert
     fs.writeFileSync(path.join(output, `${page.slug}.html`), html);
   }
   fs.writeFileSync(path.join(output, '404.html'), `${head('Page not found', 'Find corporate AI training programmes or contact Vyratec.', null)}
-<main id="main" class="wrap not-found"><div class="error-code" aria-hidden="true">404</div><div class="error-copy"><p class="eyebrow">Page not found</p><h1>This page couldn’t be found.</h1><p>The link may be out of date, or the address may have been entered incorrectly.</p><div class="error-actions"><a class="button" href="/">Return to Vyratec ${arrow}</a><a class="text-link" href="/#programmes">View training programmes</a></div><div class="error-contact"><p>Looking for corporate AI training?</p><p><a href="/#contact">Discuss your training needs</a> or <a href="mailto:shop@vyratec.com">contact us</a>.</p></div></div></main>${footer}</body></html>`);
+<main id="main" class="wrap not-found"><div class="error-code" aria-hidden="true">404</div><div class="error-copy"><p class="eyebrow">Page not found</p><h1>This page couldn’t be found.</h1><p>Check the address or choose a page below.</p><div class="error-actions"><a class="button" href="/">Return to Vyratec ${arrow}</a><a class="text-link" href="/#programmes">View training programmes</a></div><div class="error-contact"><p><a href="/#contact">Discuss your training needs</a> or <a href="mailto:shop@vyratec.com">contact us</a>.</p></div></div></main>${footer}</body></html>`);
   return pages;
 };

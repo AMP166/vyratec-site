@@ -3404,3 +3404,28 @@ html[data-page-visible="false"] .scroll-reveal,
   .skill-study { padding:10px 20px; }
   .skill-study .capability-mark { height:85px; }
 }
+
+.experience-record-heading .project-client {
+  display:block;
+  color:#496078;
+  font-size:.875rem;
+  font-weight:500;
+  letter-spacing:0;
+  margin-bottom:.35rem;
+}
+.experience-design-link {
+  display:inline-block;
+  justify-self:start;
+  margin-top:1rem;
+  color:#b7deff;
+  font-weight:600;
+  text-decoration:underline;
+  text-underline-offset:.3em;
+}
+@media screen and (min-width:950px) {
+  .experience-grid .experience-design-link { grid-column:2; }
+  .experience-grid .experience-records { align-items:stretch; }
+}
+@media print {
+  .experience-design-link { color:inherit; }
+}

@@ -150,8 +150,8 @@
     "slug": "accessibility",
     "title": "Accessibility",
     "description": "Accessibility features and assistance for visitors using the Vyratec corporate AI training website.",
-    "intro": "We want prospective clients to be able to explore our training and contact us with confidence.",
-    "updated": "2026-10-26",
+    "intro": "How to navigate the site or request another format.",
+    "updated": "2026-11-19",
     "sections": [
       {
         "id": "features",
@@ -166,7 +166,7 @@
       {
         "id": "feedback",
         "heading": "Improving access",
-        "html": "<p>We review accessibility as we update the website. Feedback about a barrier helps us identify and resolve issues. We aim to provide a practical alternative while investigating a reported problem.</p>"
+        "html": "<p>Tell us about a barrier and we’ll look for an alternative while we investigate.</p>"
       }
     ]
   }
