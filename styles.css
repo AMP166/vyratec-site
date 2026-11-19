@@ -3184,12 +3184,38 @@ html[data-page-visible="false"] .scroll-reveal,
   .hero {
     color:#f4f8ff;
     background:
-      url('/assets/hero-wave-right.svg') right -12vw bottom 45px / 65% 95% no-repeat,
-      url('/assets/hero-wave-left.svg') left -13vw bottom 40px / 58% 85% no-repeat,
       radial-gradient(ellipse at 92% 80%,#1665a8,transparent 55%),
       linear-gradient(118deg,#061328 6%,#0a2446 54%,#104781);
   }
   .hero h1 { color:#fff; font-weight:650; line-height:1.04; letter-spacing:-.055em; }
+  .hero-grid { position:relative; isolation:isolate; }
+  .hero-grid::before, .hero-grid::after {
+    content:"";
+    pointer-events:none;
+    position:absolute;
+    z-index:-1;
+    bottom:-8%;
+    height:100%;
+    background-repeat:no-repeat;
+    background-size:100% 100%;
+  }
+  .hero-grid::before {
+    left:calc(50% - 64vw);
+    width:60vw;
+    background-image:url('/assets/hero-wave-left.svg');
+    --wave-x:2.4vw;
+    --wave-y:-3%;
+    --wave-duration:19s;
+  }
+  .hero-grid::after {
+    right:calc(50% - 64vw);
+    width:68vw;
+    background-image:url('/assets/hero-wave-right.svg');
+    --wave-x:-3vw;
+    --wave-y:-4%;
+    --wave-duration:24s;
+  }
+  .experience-band { position:relative; }
   .hero h1 span { color:#73bcff; }
   .hero-lead { color:#eef5ff; }
   .hero-description, .hero-local-note, .hero-local-note a, .hero-location, .hero-location a { color:#c4d7ea; }
@@ -3252,7 +3278,22 @@ html[data-page-visible="false"] .scroll-reveal,
 }
 @media screen and (max-width:700px) {
   .hero { background:radial-gradient(ellipse at 110% 62%,#174c7d,transparent 58%),#091c34; }
+  .hero-grid::before, .hero-grid::after { height:70%; opacity:.48; --wave-y:-1.5%; }
   .hero-process .process-panels { min-height:7.5rem; }
+}
+@media screen and (prefers-reduced-motion:no-preference) {
+  html[data-motion="running"] .hero-grid.has-entered::before,
+  html[data-motion="running"] .hero-grid.has-entered::after {
+    animation:hero-wave-drift var(--wave-duration) ease-in-out -5s infinite alternate paused;
+  }
+  html[data-motion="running"][data-page-visible="true"] .hero-grid.is-in-view::before,
+  html[data-motion="running"][data-page-visible="true"] .hero-grid.is-in-view::after {
+    animation-play-state:running;
+  }
+  @keyframes hero-wave-drift {
+    from { transform:translate3d(0,0,0) scale(1); }
+    to { transform:translate3d(var(--wave-x),var(--wave-y),0) scale(1.05); }
+  }
 }
 @media print {
   .site-header .brand { display:none; }

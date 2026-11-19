@@ -84,7 +84,7 @@
   const enhanceMotion = () => {
     const page = document.documentElement;
     const graphics = [...document.querySelectorAll([
-      '.hero-process', '.programme-row', '.approach-steps li', '.workflow-example', '.model-endpoint',
+      '.hero-grid', '.hero-process', '.programme-row', '.approach-steps li', '.workflow-example', '.model-endpoint',
       '.capability', '.experience-record', '.section-heading', '.local-ai-priorities article',
       '.contact-copy', '.training-facts', '.training-aside', '.programme-section', '.training-intro',
       '.information-heading', '.information-content section', '.information-contact', '.error-code', '.footer-brand'
