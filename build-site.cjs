@@ -7,14 +7,14 @@ const output = path.resolve(root, 'dist');
 if (path.dirname(output) !== root || path.basename(output) !== 'dist') throw new Error('Unexpected build output path');
 fs.rmSync(output, {recursive: true, force: true});
 fs.mkdirSync(output, {recursive: true});
-for (const name of ['index.html', 'styles.css', 'main.js', 'favicon.ico',
+for (const name of ['index.html', 'styles.css', 'main.js', 'voice-agent.js', 'favicon.ico',
   'site.webmanifest', 'robots.txt', 'assets', '_headers', '_redirects', '_routes.json']) {
   fs.cpSync(path.join(root, name), path.join(output, name), {recursive: true});
 }
 require('./build-pages.cjs')(root, output);
 // A new URL for changed assets prevents browser or zone caches from mixing releases.
 const assetNames = {};
-for (const name of ['styles.css', 'main.js']) {
+for (const name of ['styles.css', 'main.js', 'voice-agent.js']) {
   const content = fs.readFileSync(path.join(root, name));
   const hash = createHash('sha256').update(content).digest('hex').slice(0, 10);
   const parsed = path.parse(name);
@@ -27,11 +27,10 @@ for (const name of htmlFiles) {
     .replaceAll('href="/styles.css"', `href="/${assetNames['styles.css']}"`)
     .replaceAll('src="/main.js"', `src="/${assetNames['main.js']}"`);
   // Generated programme and information pages share the same voice assistant.
-  if (!html.includes('<elevenlabs-convai ')) {
-    const widget = fs.readFileSync(path.join(root, 'index.html'), 'utf8')
-      .match(/  <elevenlabs-convai\b[\s\S]*?<\/elevenlabs-convai>\s*<script src="https:\/\/elevenlabs\.io\/convai-widget\/index\.js"[^>]*><\/script>/)[0];
-    html = html.replace('</body>', `${widget}\n</body>`);
+  if (!html.includes('src="/voice-agent.js"')) {
+    html = html.replace('</body>', '<script src="/voice-agent.js" defer></script>\n</body>');
   }
+  html = html.replaceAll('src="/voice-agent.js"', `src="/${assetNames['voice-agent.js']}"`);
   fs.writeFileSync(path.join(output, name), html);
 }
 console.log('Vyratec built in dist/. Cloudflare bundles root functions/ separately.');
