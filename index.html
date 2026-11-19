@@ -199,21 +199,36 @@
     <section class="local-ai section" id="local-ai" aria-labelledby="local-ai-heading">
       <div class="wrap">
         <div class="local-ai-main">
-          <div class="local-ai-copy"><p class="eyebrow">Specialist capability</p><h2 id="local-ai-heading">Local AI system design</h2><p>Need to run models in your own environment? We design around the documents you handle, peak demand and where your data can go.</p><p>Our experience spans on-device models and self-hosted GPU systems. We use a workload configurator to compare hardware, response times and running costs before choosing what to test.</p><a class="text-link" href="#contact" data-cta="local-ai" data-interest="Local AI systems &amp; training">Discuss local AI for your business <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a></div>
-          <figure class="model-range">
-            <div class="model-range-heading">Hands-on experience in different AI environments</div>
-            <div class="model-range-endpoints">
-              <div class="model-endpoint">
-                <svg class="model-hardware" width="88" height="64" viewBox="0 0 88 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter" aria-hidden="true" focusable="false"><path d="M15 8h58v37H15zM8 45h72l5 10H3zM34 50h20"/><path class="model-hardware-accent" pathLength="100" d="M23 16h42v21H23z" stroke="#79b8ff"/><path class="model-hardware-accent" pathLength="100" d="M30 23h9m-9 7h22" stroke="#79b8ff"/></svg>
-                <p class="model-environment">On-device AI</p><h3 class="model-title">Laptop systems</h3><p class="model-detail">Run suitable models directly on a local machine, matched to the work and available hardware.</p>
-              </div>
-              <div class="model-endpoint">
-                <svg class="model-hardware" width="88" height="64" viewBox="0 0 88 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter" aria-hidden="true" focusable="false"><path d="M13 8h62v48H13zM13 24h62M13 40h62M22 14v4m7-4v4m-7 12v4m7-4v4m-7 12v4m7-4v4"/><path class="model-hardware-accent" pathLength="100" d="M44 16h23M44 32h23M44 48h23" stroke="#79b8ff" stroke-width="3"/></svg>
-                <p class="model-environment">Self-hosted AI</p><h3 class="model-title">GPU systems</h3><p class="model-detail">Experience configuring and running models on rented GPUs, with hosting choices assessed against your data requirements.</p>
-              </div>
+          <div class="local-ai-copy"><p class="eyebrow">Specialist capability</p><h2 id="local-ai-heading">Local AI <br>system design</h2><p>Where should your model run? Start with the work, the people using it and where your data can go.</p><p>We design for laptops and self-hosted GPUs. Our workload configurator helps compare memory, response times and operating costs before a system is tested.</p><a class="button system-enquiry" href="#contact" data-cta="local-ai" data-interest="Local AI systems &amp; training">Discuss local AI for your business <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a></div>
+          <fieldset class="system-explorer">
+            <legend>Compare deployment options</legend>
+            <div class="system-switch">
+              <input type="radio" id="mode-device" name="system-mode" checked><label for="mode-device">On-device</label>
+              <input type="radio" id="mode-shared" name="system-mode"><label for="mode-shared">Shared GPU</label>
             </div>
-            <figcaption>Deployment decisions include hosting location, provider arrangements, connected tools and access controls.</figcaption>
-          </figure>
+            <div class="system-stage" aria-hidden="true">
+              <svg viewBox="0 0 480 252" fill="none" focusable="false">
+                <defs><linearGradient id="screen-glass" x2="1" y2="1"><stop stop-color="#163756"/><stop offset="1" stop-color="#246da1"/></linearGradient><pattern id="system-dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".85" fill="#5999c0" opacity=".45"/></pattern></defs>
+                <rect width="480" height="252" fill="url(#system-dots)"/>
+                <g class="board-tracks" fill="none" stroke="#5187ad" stroke-width="1.4"><path d="m32 124 69 36 42-22 35 18m-130-50 52 27 32-17 24 12m-99 64 44-22 68 35 50-25m115-21 40-20 70 35m-118 4 53-27 73 37m-86-74 33-17 61 30"/></g>
+                <path class="system-pulse" pathLength="1" d="m32 124 69 36 42-22 35 18m156 2 40-20 70 35" stroke="#81e5ff" stroke-width="2"/>
+                <g class="device-art" stroke-linejoin="round">
+                  <path d="m157 126 115-57 69 36-118 63z" fill="#133355"/>
+                  <path d="m159 131-8-84 118-58 9 87z" transform="translate(0 32)" fill="#6488a9" stroke="#a5c7df"/>
+                  <path d="m166 151-7-68 103-51 7 69z" fill="url(#screen-glass)"/>
+                  <path d="m175 101 35-17m-34 27 62-31m-61 40 42-20" stroke="#80d6ff" stroke-width="3"/>
+                  <path d="m159 163 119-59 66 33-120 63z" fill="#82a6c5" stroke="#b9d6eb"/><path d="m159 163 65 37 120-63v6l-120 63-65-37z" fill="#395875"/>
+                  <path d="m179 161 97-48 29 15-97 49z" fill="#304e6a"/><path d="m187 162 89-44m-82 48 90-44m-83 48 90-44" stroke="#87a8c0"/><path d="m232 177 31-16 11 6-31 16z" stroke="#425d77"/>
+                </g>
+                <g class="shared-art" stroke="#85aed0" stroke-width=".8" stroke-linejoin="round">
+                  <g transform="translate(151 128)"><path d="m0 0 87-44 86 44-87 45z" fill="#557eac"/><path d="m0 0 86 45v20L0 20z" fill="#183455"/><path d="m86 45 87-45v20l-87 45z" fill="#2d628d"/><path d="m10 9 53 27m-53-22 53 27" stroke="#81acc8" stroke-width="1.6"/><path d="m99 44 45-23" stroke="#72e2f3" stroke-width="3"/></g><g transform="translate(151 102)"><path d="m0 0 87-44 86 44-87 45z" fill="#557eac"/><path d="m0 0 86 45v20L0 20z" fill="#183455"/><path d="m86 45 87-45v20l-87 45z" fill="#2d628d"/><path d="m10 9 53 27m-53-22 53 27" stroke="#81acc8" stroke-width="1.6"/><path d="m99 44 45-23" stroke="#72e2f3" stroke-width="3"/></g><g transform="translate(151 76)"><path d="m0 0 87-44 86 44-87 45z" fill="#557eac"/><path d="m0 0 86 45v20L0 20z" fill="#183455"/><path d="m86 45 87-45v20l-87 45z" fill="#2d628d"/><path d="m10 9 53 27m-53-22 53 27" stroke="#81acc8" stroke-width="1.6"/><path d="m99 44 45-23" stroke="#72e2f3" stroke-width="3"/></g>
+                  <path d="m187 74 35-17 48 24-35 18z" fill="#356389"/><path d="m195 75 24-12m-16 16 24-12m-16 16 24-12" stroke="#9ac2df"/>
+                </g>
+              </svg>
+            </div>
+            <div class="system-caption device-art"><h3>One user, one device</h3><p>Match the model to laptop memory and test it against everyday tasks. Check which connected tools can send data elsewhere.</p></div>
+            <div class="system-caption shared-art"><h3>A model shared by a team</h3><p>Size GPU memory for document length and simultaneous requests. Agree where the server runs, who has access and how it’s maintained.</p></div>
+          </fieldset>
         </div>
         <div class="local-ai-priorities">
           <article><h3>Data sovereignty</h3><p>Map where prompts, documents and logs are processed, who can access them and where backups live.</p></article>

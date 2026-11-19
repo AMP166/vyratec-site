@@ -84,14 +84,14 @@
   const enhanceMotion = () => {
     const page = document.documentElement;
     const graphics = [...document.querySelectorAll([
-      '.hero-grid', '.hero-process', '.programme-row', '.approach-steps li', '.workflow-example', '.model-endpoint',
+      '.hero-grid', '.hero-process', '.programme-row', '.approach-steps li', '.workflow-example', '.system-explorer',
       '.capability', '.experience-record', '.section-heading', '.local-ai-priorities article',
       '.contact-copy', '.training-facts', '.training-aside', '.programme-section', '.training-intro',
       '.information-heading', '.information-content section', '.information-contact', '.error-code', '.footer-brand'
     ].join(', '))];
     const revealCandidates = [...document.querySelectorAll([
       '.section-heading', '.capability', '.experience-record', '.practice-copy', '.programme-intro',
-      '.programme-row', '.approach-steps li', '.local-ai-copy', '.model-range', '.local-ai-priorities article',
+      '.programme-row', '.approach-steps li', '.local-ai-copy', '.system-explorer', '.local-ai-priorities article',
       '.faq-grid > div:first-child', '.contact-copy', '.form-panel', '.training-intro', '.programme-section',
       '.training-aside', '.footer-brand'
     ].join(', '))];
@@ -136,7 +136,7 @@
         : graphic.matches('.capability') ? '.capability-mark'
         : graphic.matches('.experience-record') ? '.experience-circuit'
         : graphic.matches('.workflow-example') ? '.workflow-line'
-        : graphic.matches('.model-endpoint') ? '.model-hardware'
+        : graphic.matches('.system-explorer') ? '.system-stage'
         : graphic.matches('.contact-copy') ? '.contact-circuit' : null;
       const target = (selector && graphic.querySelector(selector)) || graphic;
       if (!graphicTargets.has(target)) graphicTargets.set(target, []);
