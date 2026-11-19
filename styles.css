@@ -3280,3 +3280,92 @@ html[data-page-visible="false"] .scroll-reveal,
 @media print {
   .site-header .brand { display:none; }
 }
+
+/* Each training capability pairs an illustrative task with its working diagram. */
+.capability-list .capability {
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  padding:0;
+  overflow:hidden;
+}
+.skill-study {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  margin:0;
+  padding:14px 24px 13px;
+  border-bottom:1px solid #c7d9e9;
+  color:#185b95;
+  background-color:#eaf3fc;
+  background-image:radial-gradient(#b7ccdf 0.8px,transparent 1px);
+  background-size:12px 12px;
+}
+.skill-study .capability-mark {
+  width:100%;
+  height:100px;
+  color:inherit;
+  margin:0;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.skill-study .guide { stroke:#7c9fba; stroke-width:1.2; }
+.skill-study .paper, .skill-study .pin { fill:#f8fcff; stroke:currentColor; stroke-width:1.5; }
+.skill-study .wash { fill:#a8d3fa; fill-opacity:.8; }
+.skill-study .ink { stroke:currentColor; stroke-width:2; }
+.skill-study figcaption { font-size:.8125rem; font-weight:600; line-height:1.4; }
+.capability-copy { padding:clamp(20px,2vw,30px); }
+.capability:first-child .skill-study, .capability:last-child .skill-study {
+  color:#b2e3ff;
+  background-color:#123351;
+  background-image:radial-gradient(#315977 0.8px,transparent 1px);
+}
+.capability:first-child .wash, .capability:last-child .wash { fill:#3172a3; }
+.capability:first-child .pin, .capability:last-child .paper { fill:#204764; }
+@media (prefers-reduced-motion:no-preference) {
+  html[data-motion="running"] .capability.has-entered:not(.motion-complete) .ink {
+    animation:skill-trace 1.15s ease-out both;
+  }
+  @keyframes skill-trace { from { stroke-dasharray:1; stroke-dashoffset:1; } to { stroke-dasharray:1; stroke-dashoffset:0; } }
+}
+@media screen {
+  .experience.section {
+    background:linear-gradient(124deg,#091c32,#103657 75%,#16496c);
+    color:#f2f8ff;
+  }
+  .experience-grid { display:block; }
+  .experience-grid>div:first-child {
+    padding:0;
+    border:0;
+    margin-bottom:clamp(28px,4vw,54px);
+  }
+  .experience-grid .eyebrow { color:#a7d8ff; }
+  .experience-grid h2 { color:#fff; margin-top:14px; }
+  .experience-grid .experience-intro { color:#cfdfeb; }
+  .experience-records { display:grid; gap:18px; }
+  .experience-records .experience-record {
+    margin:0;
+    min-width:0;
+    padding:clamp(20px,2vw,32px);
+    border:1px solid #a8c5d8;
+    border-radius:14px;
+    background:linear-gradient(155deg,#fff,#edf5fc);
+    color:#102c47;
+    box-shadow:0 14px 28px -20px #020f1d;
+  }
+  .experience-record .experience-brand { min-height:74px; margin-bottom:22px; }
+  .experience-record .experience-brand>.micro { color:#435e76; }
+  .experience-record-heading { flex-direction:column-reverse; align-items:flex-start; gap:16px; }
+  .experience-record-heading h3 { flex:none; }
+  .experience-record-heading .experience-circuit { width:150px; flex:none; }
+}
+@media screen and (min-width:950px) {
+  .experience-grid>div:first-child { display:grid; grid-template-columns:1.2fr 1fr; column-gap:10%; align-items:end; }
+  .experience-grid .eyebrow { grid-column:1/-1; }
+  .experience-grid .experience-intro { margin:0; max-width:unset; }
+  .experience-records { grid-template-columns:repeat(3,minmax(0,1fr)); align-items:start; }
+}
+@media (max-width:700px) {
+  .skill-study { padding:10px 20px; }
+  .skill-study .capability-mark { height:85px; }
+}
