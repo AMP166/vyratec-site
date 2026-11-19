@@ -2813,29 +2813,6 @@ html[data-motion="paused"] .programme-row .programme-signal {
   stroke-dashoffset:1;
   opacity:0;
 }
-@keyframes experience-connect {
-  0% { stroke-dashoffset:1; opacity:0; }
-  12% { opacity:1; }
-  82% { stroke-dashoffset:0; opacity:1; }
-  100% { stroke-dashoffset:0; opacity:0; }
-}
-@media(prefers-reduced-motion:no-preference) {
-  html[data-motion="running"] .experience-record.has-entered:not(.motion-complete) .experience-entry-trace {
-    animation:experience-connect 1.1s cubic-bezier(.2,.7,.2,1) both;
-  }
-  html[data-page-visible="false"] .experience-entry-trace {
-    animation-play-state:paused;
-  }
-}
-@media(prefers-reduced-motion:no-preference) and (hover:hover) and (pointer:fine) {
-  html[data-motion="running"] .experience-hover-trace {
-    transition:stroke-dashoffset .45s cubic-bezier(.2,.7,.2,1),opacity .2s ease;
-  }
-  html[data-motion="running"] .experience-record:hover .experience-hover-trace {
-    stroke-dashoffset:0;
-    opacity:1;
-  }
-}
 @media(max-width:700px) {
   .experience-record-heading { gap:14px 18px; margin-bottom:16px; }
   .experience-circuit { width:120px; flex-basis:120px; }
@@ -3323,10 +3300,27 @@ html[data-page-visible="false"] .scroll-reveal,
 .capability:first-child .wash, .capability:last-child .wash { fill:#3172a3; }
 .capability:first-child .pin, .capability:last-child .paper { fill:#204764; }
 @media (prefers-reduced-motion:no-preference) {
-  html[data-motion="running"] .capability.has-entered:not(.motion-complete) .ink {
-    animation:skill-trace 1.15s ease-out both;
+  /* Each path uses pathLength="1". Advancing one complete dash period
+     makes the loop seamless, with the underlying diagram always legible. */
+  html[data-motion="running"] .capability.has-entered .ink {
+    stroke-dasharray:.42 .08;
+    animation:diagram-flow 4s linear infinite paused;
   }
-  @keyframes skill-trace { from { stroke-dasharray:1; stroke-dashoffset:1; } to { stroke-dasharray:1; stroke-dashoffset:0; } }
+  html[data-motion="running"] .experience-record.has-entered .experience-entry-trace {
+    opacity:1;
+    stroke-dasharray:.14 .36;
+    animation:diagram-flow 3s linear infinite paused;
+  }
+  html[data-motion="running"][data-page-visible="true"] :is(.capability,.experience-record).is-in-view :is(.ink,.experience-entry-trace) {
+    animation-play-state:running;
+  }
+  html[data-motion="running"] :is(.capability,.experience-record).has-entered:nth-child(even) :is(.ink,.experience-entry-trace) {
+    animation-delay:-1.4s;
+  }
+  @keyframes diagram-flow {
+    from { stroke-dashoffset:0; }
+    to { stroke-dashoffset:-.5; }
+  }
 }
 @media screen {
   .experience.section {
