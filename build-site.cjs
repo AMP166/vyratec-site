@@ -23,9 +23,15 @@ for (const name of ['styles.css', 'main.js']) {
 }
 const htmlFiles = fs.readdirSync(output, {recursive:true}).filter(name => name.endsWith('.html'));
 for (const name of htmlFiles) {
-  const html = fs.readFileSync(path.join(output, name), 'utf8')
+  let html = fs.readFileSync(path.join(output, name), 'utf8')
     .replaceAll('href="/styles.css"', `href="/${assetNames['styles.css']}"`)
     .replaceAll('src="/main.js"', `src="/${assetNames['main.js']}"`);
+  // Generated programme and information pages share the same voice assistant.
+  if (!html.includes('<elevenlabs-convai ')) {
+    const widget = fs.readFileSync(path.join(root, 'index.html'), 'utf8')
+      .match(/  <elevenlabs-convai\b[\s\S]*?<\/elevenlabs-convai>\s*<script src="https:\/\/elevenlabs\.io\/convai-widget\/index\.js"[^>]*><\/script>/)[0];
+    html = html.replace('</body>', `${widget}\n</body>`);
+  }
   fs.writeFileSync(path.join(output, name), html);
 }
 console.log('Vyratec built in dist/. Cloudflare bundles root functions/ separately.');

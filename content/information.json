@@ -4,7 +4,7 @@
     "title": "Privacy policy",
     "description": "How Vyratec collects, uses and protects information when you visit the website or enquire about corporate AI training.",
     "intro": "How we handle your information, and how to contact us about it.",
-    "updated": "2026-10-26",
+    "updated": "2026-11-19",
     "sections": [
       {
         "id": "about",
@@ -15,6 +15,11 @@
         "id": "collection",
         "heading": "Information you give us",
         "html": "<p>Our training enquiry form collects your name, work email, organisation, training interest and the requirements you enter. If you request a callback, we also collect your phone number, preferred callback time and any optional background you provide. If you email us, we receive your email address and the content of your correspondence.</p><p>We use these details to respond, arrange a call, understand your training needs, prepare proposals and manage any resulting business relationship. Sending an enquiry or callback request does not subscribe you to marketing. You can browse without completing a form; required fields help us respond and arrange a suitable time. You can also contact us by email.</p><p>Please provide only information you are authorised to share, and leave out sensitive personal information and confidential business material.</p>"
+      },
+      {
+        "id": "voice-assistant",
+        "heading": "Optional AI voice assistant",
+        "html": "<p>The optional AI assistant is provided by ElevenLabs. Its widget contacts ElevenLabs to load its configuration and interface. If you start a voice conversation, your browser asks for microphone permission and ElevenLabs processes the audio and conversation content to provide responses. Text you send through the assistant is also processed by ElevenLabs. Conversation records may be available to Vyratec through the service and follow the account’s retention settings.</p><p>Please avoid sharing sensitive personal information or confidential business material. You can use our enquiry form or contact us by email instead. See the <a href=\"https://elevenlabs.io/privacy-policy\">ElevenLabs privacy policy</a> for its processing practices. Information may be processed outside Australia.</p>"
       },
       {
         "id": "providers",
@@ -107,7 +112,7 @@
     "title": "Cookie notice",
     "description": "Cookies, cookieless website analytics and browser privacy controls on the Vyratec corporate training website.",
     "intro": "What this website uses in your browser, and the controls available to you.",
-    "updated": "2026-10-26",
+    "updated": "2026-11-19",
     "sections": [
       {
         "id": "overview",
@@ -123,6 +128,11 @@
         "id": "security",
         "heading": "Hosting and security cookies",
         "html": "<p>The enquiry and callback forms use Cloudflare Turnstile to check that submissions are genuine. It processes browser and network signals and requires JavaScript. If a security check is unavailable or inaccessible, you can <a href=\"mailto:shop@vyratec.com\">contact us by email</a>.</p><p>Cloudflare may use essential security cookies for website protection. The cookies used depend on the features applied to a request; they are separate from advertising or visitor profiling. Cloudflare explains them in its <a href=\"https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/\">cookie reference</a> and describes its processing in its <a href=\"https://www.cloudflare.com/privacypolicy/\">privacy policy</a>.</p>"
+      },
+      {
+        "id": "voice-assistant",
+        "heading": "AI assistant browser features",
+        "html": "<p>The optional ElevenLabs assistant loads a third-party script and contacts ElevenLabs for its configuration. Depending on the widget settings and your interaction, it may use browser storage to remember acceptance of conversation terms. Voice calls need microphone permission, which you control in your browser. You do not need to start a conversation to browse or use the enquiry form. Read our <a href=\"/privacy#voice-assistant\">privacy policy</a> for details.</p>"
       },
       {
         "id": "controls",
